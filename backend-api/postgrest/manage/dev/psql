@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker-compose run --rm psql -c 'PGPASSWORD=$POSTGRES_PASSWORD psql'

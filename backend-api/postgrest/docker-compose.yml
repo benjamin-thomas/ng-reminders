@@ -1,0 +1,42 @@
+# https://docs.docker.com/compose/compose-file/#service-configuration-reference
+# But with dedicated db volume for permission issues otherwise
+version: '3.7'
+services:
+
+  postgrest:
+    image: postgrest/postgrest
+    volumes:
+      - ./postgrest.conf:/etc/postgrest.conf
+    env_file:
+      - ~/.env/ng-reminders/postgrest/db.env
+    depends_on:
+      - db
+    ports:
+      - "4444:5555"
+
+  psql:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    entrypoint: /bin/bash
+    # cmd: PGHOST=db PGUSER=postgres PGPASSWORD=$POSTGRES_PASSWORD psql
+    env_file:
+      - ~/.env/ng-reminders/postgrest/db.env
+    environment:
+      - PGHOST=db
+      - PGUSER=postgres
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      - db
+
+  db:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    restart: always
+    env_file:
+      - ~/.env/ng-reminders/postgrest/db.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - /tmp/ng-reminders/postgrest/dumps/:/tmp/dumps/
+
+volumes:
+  db-data:
