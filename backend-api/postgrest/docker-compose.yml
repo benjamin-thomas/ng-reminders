@@ -3,6 +3,16 @@
 version: '3.7'
 services:
 
+  # https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
+  dbmate:
+    image: amacneil/dbmate
+    # env_file:
+    #   - ~/.env/ng-reminders/postgrest/db.env
+    volumes:
+      - ./db:/db
+    depends_on:
+      - db
+
   postgrest:
     image: postgrest/postgrest
     volumes:

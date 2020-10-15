@@ -19,7 +19,7 @@ def psql(cmd, dbname = nil)
   if dbname
     args += ['-d', dbname]
   end
-  system(*args)
+  system(*args) || fail("Could not exec: #{args}")
 end
 
 # Remove previous
@@ -29,18 +29,17 @@ system('docker volume rm postgrest_db-data')
 # Creates postgrest_db_1
 system('docker-compose', 'up', '-d', 'db')
 puts("\e[1;33mWill now setup pg for postgrest\e[0;m")
-sleep(1)
 
-# NOTE:
-# Managed database services like scaleway or even heroku allow CREATE EXTENSION
-# as a non superuser.
-# Standard postgres does allow for this, hence I must load all extensions here
-# (I'm running as the postgres user here, just once), prior to running them
-# with IF NOT EXIST in the migrations. That way permissions error won't be
-# triggerd while keeping CREATE EXTENSION in the migration file, still.
-# Check if superuser with: select usesuper from pg_user where usename = CURRENT_USER;
-# NOTE:
-# The extension is related to the database so it must be created within the context of the development, then test databases
+1.upto(10) do |i|
+  begin
+    warn("\e[1;35mWaiting for db startup, attempt ##{i}\e[0;m")
+    psql('SELECT 1')
+    warn("\e[1;34mConnection OK!\e[0;m")
+    break
+  rescue => e
+    sleep(1)
+  end
+end
 
 psql("CREATE ROLE web_anon NOLOGIN")
 psql("CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD '#{ENV.fetch("AUTHENTICATOR_PASSWORD")}'")
@@ -49,38 +48,20 @@ psql("GRANT web_anon TO authenticator")
 ['DEV_DBNAME', 'TEST_DBNAME'].each do |env_var|
   dbname = ENV.fetch(env_var)
   psql("CREATE DATABASE #{dbname}")
-  # psql('CREATE EXTENSION "uuid-ossp"', dbname)
-  # psql('CREATE EXTENSION ltree', dbname)
-  # psql('CREATE EXTENSION btree_gist', dbname)
 
   psql('CREATE SCHEMA api', dbname)
   psql("GRANT USAGE ON SCHEMA api TO web_anon", dbname)
-
-  # psql('CREATE EXTENSION pgcrypto', dbname) # create fake tenants, dev/test only
-  # psql('CREATE EXTENSION tablefunc', dbname) # create fake account_transfers, dev/test only
-
 end
 
-sql = <<-EOS
-  create table api.todos (
-    id serial primary key,
-    done boolean not null default false,
-    task text not null,
-    due timestamptz
-  );
-  GRANT SELECT ON api.todos TO web_anon;
+puts <<EOS
+\e[1;33m
+DB setup almost complete. Now run:
 
-  insert into api.todos (task) values
-    ('finish tutorial 0'), ('pat self on back');
+  ./manage/dev/dbmate migrate
+  ./manage/dev/start_postgrest
+
+Then access DB data this way:
+  ./manage/dev/psql
+  curl http://localhost:4444/todos
+\e[0;m
 EOS
-
-psql(sql, ENV.fetch('DEV_DBNAME')) # TODO: create role once (not for dev+test)
-# psql(sql, 'postgres')
-
-
-# psql("GRANT logged_in TO admin; -- Allows admin user, creating views, to assign views OWNER TO logged_in")
-
-puts("
-Now start a contained psql prompt with: `./manage/dev/psql`
-Then launch postgrest with: `./manage/dev/start_postgrest`
-     ")

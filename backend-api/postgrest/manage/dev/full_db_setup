@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+./manage/dev/init/01.env_vars "$1"
+./manage/dev/init/02.db_container
+./manage/dev/dbmate migrate
+./manage/dev/start_postgrest
