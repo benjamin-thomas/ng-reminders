@@ -61,6 +61,6 @@ DB setup almost complete. Now run:
 
 Then access DB data this way:
   ./manage/dev/psql
-  curl http://localhost:4444/todos
+  http http://localhost:4444/todos
 \e[0;m
 EOS
