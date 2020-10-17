@@ -48,10 +48,9 @@ psql("GRANT web_anon TO authenticator")
 ['DEV_DBNAME', 'TEST_DBNAME'].each do |env_var|
   dbname = ENV.fetch(env_var)
   psql("CREATE DATABASE #{dbname}")
-
-  psql('CREATE SCHEMA api', dbname)
-  psql("GRANT USAGE ON SCHEMA api TO web_anon", dbname)
 end
+
+
 
 puts <<EOS
 \e[1;33m
