@@ -41,15 +41,26 @@ puts("\e[1;33mWill now setup pg for postgrest\e[0;m")
   end
 end
 
-psql("CREATE ROLE web_anon NOLOGIN")
 psql("CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD '#{ENV.fetch("AUTHENTICATOR_PASSWORD")}'")
-psql("GRANT web_anon TO authenticator")
 
 ['DEV_DBNAME', 'TEST_DBNAME'].each do |env_var|
   dbname = ENV.fetch(env_var)
   psql("CREATE DATABASE #{dbname}")
-end
 
+  settings_sql = <<~EOS
+    CREATE SCHEMA settings;
+
+    CREATE TABLE settings.secrets (
+      key    TEXT PRIMARY KEY,
+      value  TEXT NOT NULL
+    );
+
+    INSERT INTO settings.secrets (key, value) VALUES (
+      'jwt_secret', '#{ENV.fetch("POSTGREST_JWT_SECRET")}' -- for user auth functions
+    );
+  EOS
+  psql(settings_sql, dbname)
+end
 
 
 puts <<EOS
