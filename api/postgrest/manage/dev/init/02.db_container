@@ -52,14 +52,10 @@ psql("CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD '#{ENV.fetch("AUTHENTIC
   settings_sql = <<~EOS
     CREATE SCHEMA settings;
 
-    CREATE TABLE settings.secrets (
-      key    TEXT PRIMARY KEY,
-      value  TEXT NOT NULL
-    );
-
-    INSERT INTO settings.secrets (key, value) VALUES (
-      'jwt_secret', '#{ENV.fetch("POSTGREST_JWT_SECRET")}' -- for user auth functions
-    );
+    -- http://postgrest.org/en/v7.0.0/auth.html?highlight=users#logins
+    -- To avoid hard-coding the secret in stored procedures, save it as a property of the database.
+    -- SELECT current_setting('app.jwt_secret');
+    ALTER DATABASE #{dbname} SET "app.jwt_secret" TO '#{ENV.fetch("POSTGREST_JWT_SECRET")}';
   EOS
   psql(settings_sql, dbname)
 end

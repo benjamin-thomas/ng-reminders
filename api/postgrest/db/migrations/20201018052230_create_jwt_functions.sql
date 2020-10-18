@@ -3,6 +3,7 @@
 -- https://raw.githubusercontent.com/michelp/pgjwt/master/pgjwt--0.1.0.sql
 CREATE EXTENSION pgcrypto;
 CREATE SCHEMA jwt;
+GRANT USAGE ON SCHEMA jwt TO web_anon;
 
 CREATE OR REPLACE FUNCTION jwt.url_encode(data bytea) RETURNS text LANGUAGE sql AS $$
     SELECT translate(encode(data, 'base64'), E'+/=\n', '-_');
