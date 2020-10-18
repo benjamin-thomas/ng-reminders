@@ -31,7 +31,8 @@ $$ language plpgsql security definer;
 
 CREATE ROLE webuser NOINHERIT NOLOGIN;
 -- Then create users as postgres that way
-INSERT INTO basic_auth.users (email, pass, role) VALUES ('foo@bar.com', 'yoz', 'webuser');
+INSERT INTO basic_auth.users (email, pass, role) VALUES ('user1@example.com', 'yo', 'webuser');
+INSERT INTO basic_auth.users (email, pass, role) VALUES ('user2@example.com', 'yo', 'webuser');
 -- And login that way
 -- http POST http://localhost:4444/rpc/login email=foo@bar.com pass=yoz
 
