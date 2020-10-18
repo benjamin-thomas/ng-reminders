@@ -6,6 +6,8 @@ CREATE TABLE api.reminders (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
   , email TEXT NOT NULL REFERENCES basic_auth.users(email) DEFAULT current_setting('request.jwt.claim.email')
   , content TEXT NOT NULL
+  , done BOOLEAN NOT NULL DEFAULT FALSE
+  , due TIMESTAMPTZ
 );
 ALTER TABLE api.reminders ENABLE ROW LEVEL SECURITY;
 
