@@ -41,6 +41,8 @@ puts("\e[1;33mWill now setup pg for postgrest\e[0;m")
   end
 end
 
+# Source: http://postgrest.org/en/v7.0.0/auth.html?highlight=users#logins
+# Roles are namespaced per-cluster rather than per-database so they may be prone to collision.
 psql("CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD '#{ENV.fetch("AUTHENTICATOR_PASSWORD")}'")
 
 ['DEV_DBNAME', 'TEST_DBNAME'].each do |env_var|
