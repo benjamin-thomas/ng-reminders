@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-credentials-form',
@@ -12,7 +11,7 @@ export class CredentialsFormComponent implements OnInit {
   @Input() showPasswordReset = false;
   @Input() buttonTitle: string;
 
-  @Output() handleSubmit = new EventEmitter<{ email: string, password: string }>();
+  @Output() handleValidSubmit = new EventEmitter<{ email: string, password: string }>();
 
   email = new FormControl();
   password = new FormControl();
@@ -21,7 +20,7 @@ export class CredentialsFormComponent implements OnInit {
     password: this.password
   });
 
-  constructor(private authService: AuthService) {
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -32,6 +31,6 @@ export class CredentialsFormComponent implements OnInit {
       return;
     }
 
-    this.handleSubmit.emit({email: this.email.value, password: this.password.value});
+    this.handleValidSubmit.emit({email: this.email.value, password: this.password.value});
   }
 }
