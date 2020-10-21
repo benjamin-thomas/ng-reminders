@@ -1,1 +1,5 @@
-<p>reminders-list works!</p>
+<ul>
+  <li *ngFor="let r of reminders">
+    {{ r.content }} | {{ r.due | date:'short'}} | {{ r.done }}
+  </li>
+</ul>
