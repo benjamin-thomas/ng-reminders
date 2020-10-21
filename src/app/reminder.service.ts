@@ -24,4 +24,13 @@ export class ReminderService {
     return this.http
       .get<Reminder[]>(ReminderService.URL, {headers});
   }
+
+  add(reminder: Reminder) {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+
+    return this.http
+      .post<Reminder>(ReminderService.URL, reminder, {headers});
+  }
 }

@@ -9,6 +9,9 @@ import { CredentialsFormComponent } from './credentials/components/credentials-f
 import { RemindersListComponent } from './components/reminders/reminders-list/reminders-list.component';
 import {HttpClientModule} from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
+import { ReminderFormComponent } from './components/reminders/reminder-form/reminder-form.component';
+import { ReminderAddComponent } from './components/reminders/reminder-add/reminder-add.component';
+import { ReminderEditComponent } from './components/reminders/reminder-edit/reminder-edit.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +19,10 @@ import {ReactiveFormsModule} from '@angular/forms';
     LoginComponent,
     SignupComponent,
     CredentialsFormComponent,
-    RemindersListComponent
+    RemindersListComponent,
+    ReminderFormComponent,
+    ReminderAddComponent,
+    ReminderEditComponent
   ],
   imports: [
     BrowserModule,

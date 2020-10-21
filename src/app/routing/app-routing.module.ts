@@ -4,13 +4,18 @@ import {LoginComponent} from '../credentials/components/login/login.component';
 import {SignupComponent} from '../credentials/components/signup/signup.component';
 import {AuthGuard} from '../credentials/guards/auth.guard';
 import {RemindersListComponent} from '../components/reminders/reminders-list/reminders-list.component';
+import {ReminderFormComponent} from '../components/reminders/reminder-form/reminder-form.component';
+import {ReminderAddComponent} from '../components/reminders/reminder-add/reminder-add.component';
+import {ReminderEditComponent} from '../components/reminders/reminder-edit/reminder-edit.component';
 
 const routes: Routes = [
   {
     path: '', canActivate: [AuthGuard], children: [
       {
         path: 'reminders', children: [
-          {path: 'list', component: RemindersListComponent}
+          {path: 'list', component: RemindersListComponent},
+          {path: 'add', component: ReminderAddComponent},
+          {path: 'edit/:id', component: ReminderEditComponent},
         ]
       }
     ]

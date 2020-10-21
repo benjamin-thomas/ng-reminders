@@ -1,3 +1,5 @@
+<a routerLink="/reminders/add">Add a reminder</a>
+
 <ul>
   <li *ngFor="let r of reminders">
     {{ r.content }} | {{ r.due | date:'short'}} | {{ r.done }}
