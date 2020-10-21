@@ -21,6 +21,8 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    // NOTE: AuthService#login does re-login before token expiration so this
+    //       code triggers if the user has been away from the app for a while.
     return this.router.createUrlTree(['login']);
   }
 

@@ -1,0 +1,10 @@
+## Better timestamps display
+
+- https://medium.com/@thunderroid/angular-date-ago-pipe-minutes-hours-days-months-years-ago-c4b5efae5fe5
+- https://blog.dzhuneyt.com/angular-pipe-for-displaying-a-timestamp-in-a-human-friendly-way/
+  - https://stackoverflow.com/questions/36624914/trigger-pipe-reload-without-change-in-input/48367046
+
+---
+
+## For date pipes fr param
+https://angular.io/guide/i18n
