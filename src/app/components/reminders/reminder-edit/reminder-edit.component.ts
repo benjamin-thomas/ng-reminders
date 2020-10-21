@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
+import {ReminderService} from '../../../reminder.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {formatDate} from '@angular/common';
 
 @Component({
   selector: 'app-reminder-edit',
@@ -7,9 +11,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReminderEditComponent implements OnInit {
 
-  constructor() { }
+  form = new FormGroup({
+    content: new FormControl(),
+    done: new FormControl(),
+    due: new FormControl(),
+  });
+  private id: number;
 
-  ngOnInit(): void {
+  constructor(private reminderService: ReminderService,
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.reminderService.get(params.id).subscribe(reminder => {
+        this.id = reminder.id;
+
+        const due = formatDate(reminder.due, 'yyyy-MM-ddTHH:mm', 'en');
+        this.form.controls.content.setValue(reminder.content);
+        this.form.controls.done.setValue(reminder.done);
+        this.form.controls.due.setValue(due);
+      });
+
+    });
+  }
+
+  onSubmit() {
+    this.reminderService.update(this.id, this.form.value).subscribe(() => {
+      this.router.navigate(['/reminders', 'list']);
+    });
+  }
 }

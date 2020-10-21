@@ -1,7 +1,25 @@
-<a routerLink="/reminders/add">Add a reminder</a>
+<a routerLink="/reminders/add">Add a reminder!</a>
 
-<ul>
-  <li *ngFor="let r of reminders">
-    {{ r.content }} | {{ r.due | date:'short'}} | {{ r.done }}
-  </li>
-</ul>
+<table>
+  <thead>
+  <tr>
+    <th>Content</th>
+    <th>Due</th>
+    <th>Done</th>
+    <th>links</th>
+  </tr>
+  </thead>
+
+  <tbody>
+
+  <tr *ngFor="let r of reminders">
+    <td>{{r.content}}</td>
+    <td>{{r.due | date:'short'}}</td>
+    <td>{{r.done}}</td>
+    <td>
+    <a [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
+    </td>
+  </tr>
+
+  </tbody>
+</table>

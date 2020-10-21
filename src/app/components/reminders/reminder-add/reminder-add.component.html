@@ -1,19 +1,5 @@
-<div id="container">
-
-  <div id="sign_in" class="form-container sign-in-container">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <h1>Add a reminder</h1>
-
-      <label class="align-left" for="due">Due</label>
-      <input type="datetime-local" id="due" formControlName="due">
-
-      <label class="align-left" for="content">Content</label>
-
-      <textarea id="content" rows="10"
-                formControlName="content"></textarea>
-
-      <button type="submit">Save</button>
-
-    </form>
-  </div>
-</div>
+<app-reminder-form
+  title="Add a reminder!"
+  [form]="form"
+  (handleValidSubmit)="onSubmit()"
+></app-reminder-form>

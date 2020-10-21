@@ -3,9 +3,7 @@ import {ReminderService} from '../../../reminder.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ActivatedRoute, Router} from '@angular/router';
-
-
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-reminder-add',
@@ -15,6 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class ReminderAddComponent implements OnInit {
   inOneHour = new Date(Date.now() + 1000 * 60 * 60);
   defaultDate = formatDate(this.inOneHour, 'yyyy-MM-ddTHH:mm', 'en');
+
   form = new FormGroup({
     content: new FormControl(`This is my content at ${Date.now()}`),
     done: new FormControl(false),
@@ -30,15 +29,14 @@ export class ReminderAddComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('Should submit:', this.form.value);
     this.reminderService
-      .add(this.form.value)
+      .create(this.form.value)
       .subscribe(data => {
         console.log('Ok (null is returned here):', data);
         this.router.navigate(['reminders', 'list']);
       }, (err: HttpErrorResponse) => {
         alert('Something bad happened!');
         console.log('Something failed!', err.error);
-      })
+      });
   }
 }
