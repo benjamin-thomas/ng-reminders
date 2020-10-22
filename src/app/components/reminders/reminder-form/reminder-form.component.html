@@ -13,7 +13,10 @@
                 #content
                 formControlName="content"></textarea>
 
-      <button type="submit">Save</button>
+      <button
+        #submit
+        (document:keydown.control.enter)="submit.click()"
+        type="submit">Save</button>
 
     </form>
   </div>

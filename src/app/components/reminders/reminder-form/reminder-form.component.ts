@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  Output,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 @Component({
@@ -25,7 +16,6 @@ export class ReminderFormComponent implements AfterViewInit {
     this.content.nativeElement.focus();
   }
 
-  @HostListener('document:keydown.control.enter')
   onSubmit() {
     if (!this.form.valid) {
       return;
