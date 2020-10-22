@@ -37,7 +37,7 @@ export class ReminderEditComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onValidSubmit() {
     this.reminderService.update(this.id, this.form.value).subscribe(() => {
       this.router.navigate(['/reminders', 'list']);
     });

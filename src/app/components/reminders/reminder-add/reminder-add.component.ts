@@ -28,7 +28,7 @@ export class ReminderAddComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit() {
+  onValidSubmit() {
     this.reminderService
       .create(this.form.value)
       .subscribe(data => {
