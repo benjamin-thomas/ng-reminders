@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 
 @Component({
@@ -6,17 +15,17 @@ import {FormGroup} from '@angular/forms';
   templateUrl: './reminder-form.component.html',
   styleUrls: ['./reminder-form.component.scss']
 })
-export class ReminderFormComponent implements OnInit {
-
+export class ReminderFormComponent implements AfterViewInit {
   @Input() form: FormGroup;
   @Input() title: string;
   @Output() handleValidSubmit = new EventEmitter();
+  @ViewChild('content') content: ElementRef;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    this.content.nativeElement.focus();
   }
 
+  @HostListener('document:keydown.control.enter')
   onSubmit() {
     if (!this.form.valid) {
       return;

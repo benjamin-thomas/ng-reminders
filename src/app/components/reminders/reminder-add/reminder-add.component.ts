@@ -15,7 +15,7 @@ export class ReminderAddComponent implements OnInit {
   defaultDate = formatDate(this.inOneHour, 'yyyy-MM-ddTHH:mm', 'en');
 
   form = new FormGroup({
-    content: new FormControl(`This is my content at ${Date.now()}`),
+    content: new FormControl(),
     done: new FormControl(false),
     due: new FormControl(this.defaultDate),
   });
