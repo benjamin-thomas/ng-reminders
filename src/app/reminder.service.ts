@@ -12,19 +12,8 @@ export class ReminderService {
   constructor(private http: HttpClient) {
   }
 
-  get token(): string {
-    return localStorage.getItem('token');
-  }
-
-  private get headers() {
+  private static get singleResourceHeader() {
     return new HttpHeaders({
-      Authorization: `Bearer ${this.token}`
-    });
-  }
-
-  private get headers2() {
-    return new HttpHeaders({
-      Authorization: `Bearer ${this.token}`,
       Accept: 'application/vnd.pgrst.object+json', // returns a single item, vs Array
     });
   }
@@ -35,21 +24,21 @@ export class ReminderService {
 
   getAll(): Observable<Reminder[]> {
     return this.http
-      .get<Reminder[]>(ReminderService.URL + '?order=due.asc', {headers: this.headers});
+      .get<Reminder[]>(ReminderService.URL + '?order=due.asc');
   }
 
   create(reminder: Reminder) {
     return this.http
-      .post<Reminder>(ReminderService.URL, reminder, {headers: this.headers});
+      .post<Reminder>(ReminderService.URL, reminder);
   }
 
   get(id: number) {
     return this.http
-      .get<Reminder>(ReminderService.URL2(id), {headers: this.headers2});
+      .get<Reminder>(ReminderService.URL2(id), {headers: ReminderService.singleResourceHeader});
   }
 
   update(id: number, reminder: Reminder) {
     return this.http
-      .patch<Reminder>(ReminderService.URL2(id), reminder, {headers: this.headers2});
+      .patch<Reminder>(ReminderService.URL2(id), reminder, {headers: ReminderService.singleResourceHeader});
   }
 }

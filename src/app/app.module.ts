@@ -7,11 +7,12 @@ import { SignupComponent } from './credentials/components/signup/signup.componen
 import {AppRoutingModule} from './routing/app-routing.module';
 import { CredentialsFormComponent } from './credentials/components/credentials-form/credentials-form.component';
 import { RemindersListComponent } from './components/reminders/reminders-list/reminders-list.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {ReactiveFormsModule} from '@angular/forms';
 import { ReminderFormComponent } from './components/reminders/reminder-form/reminder-form.component';
 import { ReminderAddComponent } from './components/reminders/reminder-add/reminder-add.component';
 import { ReminderEditComponent } from './components/reminders/reminder-edit/reminder-edit.component';
+import {AuthInterceptor} from './auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,13 @@ import { ReminderEditComponent } from './components/reminders/reminder-edit/remi
     ReactiveFormsModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
