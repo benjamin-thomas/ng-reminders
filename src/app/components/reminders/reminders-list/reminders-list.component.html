@@ -1,28 +1,36 @@
-<a
-  #addReminder
-  (document:keydown.alt.n)="addReminder.click()"
-  routerLink="/reminders/add">Add a reminder!</a>
+<div id="container-wide">
+  <div style="margin-bottom: 30px">
+    <a
+      class="btn"
+      #addReminder
+      (document:keydown.alt.n)="addReminder.click()"
+      routerLink="/reminders/add">Add a reminder!</a>
+  </div>
 
-<table>
-  <thead>
-  <tr>
-    <th>Content</th>
-    <th>Due</th>
-    <th>Done</th>
-    <th>links</th>
-  </tr>
-  </thead>
+  <table>
+    <thead>
+    <tr>
+      <th>Content</th>
+      <th>Due</th>
+      <th>Done</th>
+      <th style="display: none">Links</th>
+    </tr>
+    </thead>
 
-  <tbody>
+    <tbody>
 
-  <tr *ngFor="let r of reminders">
-    <td>{{r.content}}</td>
-    <td>{{r.due | date:'short'}}</td>
-    <td>{{r.done}}</td>
-    <td>
-    <a [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
-    </td>
-  </tr>
+    <tr
+      (click)="editResource.click()"
+      *ngFor="let r of reminders">
+      <td>{{r.content}}</td>
+      <td>{{r.due | date:'short'}}</td>
+      <td>{{r.done}}</td>
+      <td style="display: none">
+        <a
+          #editResource [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
+      </td>
+    </tr>
 
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>

@@ -1,5 +1,4 @@
-<div id="container">
-
+<div id="container-narrow">
   <div class="form-container">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <h1>{{ title }}</h1>
@@ -16,7 +15,8 @@
       <button
         #submit
         (document:keydown.control.enter)="submit.click()"
-        type="submit">Save</button>
+        type="submit">Save
+      </button>
 
     </form>
   </div>

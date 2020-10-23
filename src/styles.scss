@@ -1,10 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
 // Google Fonts
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab|Open+Sans:400italic,700italic,400,700);
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 // Font Variables
-$header-font: 'Roboto Slab', serif;
+$header-font: 'Roboto', serif;
 $body-font: 'Open Sans', sans-serif;
 
 // Styles
@@ -12,6 +12,69 @@ body {
   font-family: $body-font;
   background: #f4f4f4;
 }
-h1, h2, h3, h4, h5, h6 {
+
+h1, h2, h3, h4, h5, h6, th {
   font-family: $header-font;
+}
+
+.btn {
+  background: #19bd59;
+  padding: 1rem;
+  border-radius: 7px;
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.btn:hover {
+  background: darken(#19bd59, 6);
+}
+
+#container-narrow, #container-wide {
+  background: white;
+  margin: 50px auto;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+  0 10px 10px rgba(0, 0, 0, 0.22);
+  color: #333;
+}
+
+#container-narrow {
+  max-width: 380px;
+}
+
+#container-wide {
+  max-width: 90%;
+
+  padding: 80px 40px;
+  box-sizing: border-box;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: .75rem 1rem;
+}
+
+td {
+  border-top: 1px solid #ececec;
+}
+
+thead th {
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: left;
+}
+
+tbody tr:hover {
+  background: #F8F8F8;
+  color: #282828;
+}
+
+tbody tr:first-of-type td {
+  border-top: none;
 }

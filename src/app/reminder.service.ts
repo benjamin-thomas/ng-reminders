@@ -35,7 +35,7 @@ export class ReminderService {
 
   getAll(): Observable<Reminder[]> {
     return this.http
-      .get<Reminder[]>(ReminderService.URL, {headers: this.headers});
+      .get<Reminder[]>(ReminderService.URL + '?order=due.asc', {headers: this.headers});
   }
 
   create(reminder: Reminder) {
