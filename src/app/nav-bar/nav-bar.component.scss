@@ -1,0 +1,64 @@
+@import '../../styles.vars.scss';
+a {
+  text-decoration: none;
+}
+#nav-container, a {
+  color: #ececec;
+}
+// Submenu toggling
+li[appExpandMenu]:after {
+  content: '⯆';
+}
+li[appExpandMenu] ul {
+  display: none;
+}
+li.open {
+  position: relative;
+}
+li.open:after {
+  content: '⯅';
+}
+
+li.open ul {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: $nav-bar-color;
+  top: 100%;
+  left: 0;
+}
+
+// Basic styles
+#nav-container {
+  display: flex;
+  white-space: nowrap;
+  user-select: none;
+}
+#nav-container nav {
+  background: $nav-bar-color;
+}
+#center-nav > ul {
+  display: flex;
+  justify-content: space-evenly;
+  margin-left: 50px;
+  margin-right: 500px;
+  }
+
+#center-nav {
+  width: 100%;
+}
+#center-nav li:hover, #right-nav li:hover {
+  background: $nav-bar-hover-color;
+}
+nav ul {
+  margin: 0;
+  padding: 0;
+}
+nav ul li {
+  padding: 1rem;
+}
+li {
+  list-style: none;
+}
+
+

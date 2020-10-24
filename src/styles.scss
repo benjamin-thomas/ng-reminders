@@ -7,10 +7,13 @@
 $header-font: 'Roboto', serif;
 $body-font: 'Open Sans', sans-serif;
 
+@import "styles.vars";
+
 // Styles
 body {
   font-family: $body-font;
-  background: #f4f4f4;
+  background: $body-background-color;
+  margin: 0;
 }
 
 h1, h2, h3, h4, h5, h6, th {
@@ -18,7 +21,7 @@ h1, h2, h3, h4, h5, h6, th {
 }
 
 .btn {
-  background: #19bd59;
+  background: $btn-color;
   padding: 1rem;
   border-radius: 7px;
   text-decoration: none;
@@ -28,7 +31,7 @@ h1, h2, h3, h4, h5, h6, th {
 }
 
 .btn:hover {
-  background: darken(#19bd59, 6);
+  background: $btn-hover-color;
 }
 
 #container-narrow, #container-wide {
@@ -37,7 +40,7 @@ h1, h2, h3, h4, h5, h6, th {
   border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
   0 10px 10px rgba(0, 0, 0, 0.22);
-  color: #333;
+  color: $text-color;
 }
 
 #container-narrow {
@@ -61,7 +64,7 @@ th, td {
 }
 
 td {
-  border-top: 1px solid #ececec;
+  border-top: 1px solid $table-border-color;
 }
 
 thead th {
@@ -71,8 +74,8 @@ thead th {
 }
 
 tbody tr:hover {
-  background: #F8F8F8;
-  color: #282828;
+  background: $table-hover-bg-color;
+  color: $table-hover-text-color;
 }
 
 tbody tr:first-of-type td {
