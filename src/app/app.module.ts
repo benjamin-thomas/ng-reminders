@@ -15,6 +15,7 @@ import {ReminderEditComponent} from './components/reminders/reminder-edit/remind
 import {AuthInterceptor} from './auth.interceptor';
 import {NavBarComponent} from './nav-bar/nav-bar.component';
 import {ExpandMenuDirective} from './expand-menu.directive';
+import { LogoutComponent } from './credentials/components/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import {ExpandMenuDirective} from './expand-menu.directive';
     ReminderEditComponent,
     NavBarComponent,
     ExpandMenuDirective,
+    LogoutComponent,
   ],
   imports: [
     BrowserModule,
