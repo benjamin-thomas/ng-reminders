@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   template: '',
@@ -7,11 +7,11 @@ import {Router} from '@angular/router';
 })
 export class LogoutComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private authService: AuthService) {
+  }
 
   ngOnInit(): void {
-    localStorage.removeItem('token');
-    this.router.navigate(['login']);
+    this.authService.logout();
   }
 
 }

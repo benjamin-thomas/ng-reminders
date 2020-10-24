@@ -25,6 +25,7 @@ export class AuthService {
               private router: Router) {
   }
 
+
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -39,6 +40,11 @@ export class AuthService {
 
   signup(email: string, password: string) {
     this.handleAuth(AuthService.SIGNUP_URL, email, password);
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['login']);
   }
 
   private handleAuth(url: string, email: string, password) {
