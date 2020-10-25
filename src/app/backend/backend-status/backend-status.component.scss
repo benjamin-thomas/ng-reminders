@@ -12,9 +12,14 @@ p {
   0 7px 7px rgba(0, 0, 0, 0.07);
 }
 
-.colorize {
+a {
+  text-decoration: none;
   color: $nav-bar-color;
   font-weight: bold;
   //text-transform: uppercase;
   font-family: $header-font;
+}
+
+a:hover {
+  text-decoration: underline;
 }

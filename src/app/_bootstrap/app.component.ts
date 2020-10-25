@@ -9,7 +9,7 @@ import {filter} from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
   title = 'ng-reminders';
-  showNavBar = false;
+  afterLogin = false;
 
 
   constructor(private router: Router) {
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(evt => evt instanceof NavigationEnd)
     ).subscribe((nav: NavigationEnd) => {
-      this.showNavBar = nav.url !== '/login';
+      this.afterLogin = nav.url !== '/login';
     });
 
   }

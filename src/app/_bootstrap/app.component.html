@@ -1,4 +1,4 @@
-<app-nav-bar *ngIf="showNavBar"></app-nav-bar>
-<app-backend-status></app-backend-status>
+<app-nav-bar *ngIf="afterLogin"></app-nav-bar>
+<app-backend-status *ngIf="afterLogin"></app-backend-status>
 
 <router-outlet></router-outlet>

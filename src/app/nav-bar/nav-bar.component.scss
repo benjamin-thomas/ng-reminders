@@ -1,20 +1,35 @@
 @import '../../styles.vars.scss';
+
+$side-padding: 70px;
 a {
   text-decoration: none;
 }
+
 #nav-container, a {
   color: #ececec;
 }
+
+#left-nav {
+  padding-left: $side-padding;
+}
+
+#right-nav {
+  padding-right: $side-padding;
+}
+
 // Submenu toggling
 li[appExpandMenu]:after {
   content: '⯆';
 }
+
 li[appExpandMenu] ul {
   display: none;
 }
+
 li.open {
   position: relative;
 }
+
 li.open:after {
   content: '⯅';
 }
@@ -34,9 +49,11 @@ li.open ul {
   white-space: nowrap;
   user-select: none;
 }
+
 #nav-container nav {
   background: $nav-bar-color;
 }
+
 #center-nav > ul {
   display: flex;
   margin-left: 3rem;
@@ -44,21 +61,25 @@ li.open ul {
   //justify-content: space-evenly;
   //margin-left: 50px;
   //margin-right: 500px;
-  }
+}
 
 #center-nav {
   width: 100%;
 }
+
 #center-nav li:hover, #right-nav li:hover {
   background: $nav-bar-hover-color;
 }
+
 nav ul {
   margin: 0;
   padding: 0;
 }
+
 nav ul li {
   padding: 1rem;
 }
+
 li {
   list-style: none;
 }
