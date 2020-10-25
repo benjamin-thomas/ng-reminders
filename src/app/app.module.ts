@@ -16,7 +16,8 @@ import {AuthInterceptor} from './credentials/interceptors/auth.interceptor';
 import {NavBarComponent} from './nav-bar/nav-bar.component';
 import {ExpandMenuDirective} from './nav-bar/expand-menu.directive';
 import { LogoutComponent } from './credentials/components/logout/logout.component';
-import { BackendSelectComponent } from './backend-select/backend-select.component';
+import { BackendSelectComponent } from './backend/backend-select/backend-select.component';
+import { BackendStatusComponent } from './backend/backend-status/backend-status.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { BackendSelectComponent } from './backend-select/backend-select.componen
     ExpandMenuDirective,
     LogoutComponent,
     BackendSelectComponent,
+    BackendStatusComponent,
   ],
   imports: [
     BrowserModule,

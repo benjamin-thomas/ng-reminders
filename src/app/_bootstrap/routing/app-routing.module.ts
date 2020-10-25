@@ -7,7 +7,7 @@ import {RemindersListComponent} from '../../reminders/reminders-list/reminders-l
 import {ReminderAddComponent} from '../../reminders/reminder-add/reminder-add.component';
 import {ReminderEditComponent} from '../../reminders/reminder-edit/reminder-edit.component';
 import {LogoutComponent} from '../../credentials/components/logout/logout.component';
-import {BackendSelectComponent} from '../../backend-select/backend-select.component';
+import {BackendSelectComponent} from '../../backend/backend-select/backend-select.component';
 
 const routes: Routes = [
   {

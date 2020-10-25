@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   title = 'ng-reminders';
   showNavBar = false;
 
+
   constructor(private router: Router) {
   }
 
@@ -20,5 +21,6 @@ export class AppComponent implements OnInit {
     ).subscribe((nav: NavigationEnd) => {
       this.showNavBar = nav.url !== '/login';
     });
+
   }
 }

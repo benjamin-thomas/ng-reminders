@@ -1,0 +1,20 @@
+@import 'src/styles.vars';
+
+$rounded: 8px;
+p {
+  background: white;
+  margin:0;
+  padding: .4rem 1rem;
+  border-radius: 0 0 $rounded $rounded;
+  //text-align: right;
+  float:right;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.16),
+  0 7px 7px rgba(0, 0, 0, 0.07);
+}
+
+.colorize {
+  color: $nav-bar-color;
+  font-weight: bold;
+  //text-transform: uppercase;
+  font-family: $header-font;
+}
