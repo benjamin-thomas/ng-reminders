@@ -1,4 +1,6 @@
-<app-nav-bar *ngIf="afterLogin"></app-nav-bar>
-<app-backend-status *ngIf="afterLogin"></app-backend-status>
+<div [class.stick-at-top-hack]="!showNavBar">
+  <app-nav-bar *ngIf="showNavBar"></app-nav-bar>
+  <app-backend-status></app-backend-status>
+</div>
 
 <router-outlet></router-outlet>

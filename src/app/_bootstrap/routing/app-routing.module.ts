@@ -12,7 +12,7 @@ import {BackendSelectedGuard} from '../../backend/backend-selected.guard';
 
 const routes: Routes = [
   {
-    path: '', canActivate: [AuthGuard, BackendSelectedGuard], children: [
+    path: '', canActivate: [BackendSelectedGuard, AuthGuard], children: [
       { path: '', component: RemindersListComponent}, // default route
       {
         path: 'reminders', children: [
@@ -23,9 +23,9 @@ const routes: Routes = [
       }
     ]
   },
-  {path: 'login', component: LoginComponent},
+  {path: 'login', component: LoginComponent, canActivate: [BackendSelectedGuard]},
   {path: 'logout', component: LogoutComponent},
-  {path: 'signup', component: SignupComponent},
+  {path: 'signup', component: SignupComponent, canActivate: [BackendSelectedGuard]},
   {path: 'select-backend', component: BackendSelectComponent},
 ];
 

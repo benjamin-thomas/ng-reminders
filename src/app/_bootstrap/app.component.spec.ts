@@ -23,7 +23,7 @@ describe('AppComponent', () => {
   it(`should have a false afterLogin property`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.afterLogin).toEqual(false);
+    expect(app.showNavBar).toEqual(false);
   });
 
   it('should render title', () => {

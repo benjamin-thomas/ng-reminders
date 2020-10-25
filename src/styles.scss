@@ -91,3 +91,8 @@ tbody tr:hover {
 tbody tr:first-of-type td {
   border-top: none;
 }
+
+.stick-at-top-hack {
+  // Weird Angular bug, not sure why this works
+  border-top: 1px solid transparent;
+}

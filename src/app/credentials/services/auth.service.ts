@@ -4,6 +4,8 @@ import {take} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
 import {interval, Subscription} from 'rxjs';
+import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
+import {Backend} from '../../backend/backend.model';
 
 // http POST http://localhost:4444/rpc/login email=user1@example.com pass=yo
 export interface AuthResponse {
@@ -11,20 +13,26 @@ export interface AuthResponse {
 }
 
 const SECONDS = 1000;
+const HOST = 'http://localhost:4444';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private static readonly LOGIN_URL = 'http://localhost:4444/rpc/login';
-  private static readonly SIGNUP_URL = 'http://localhost:4444/rpc/signup';
   private helper = new JwtHelperService();
   private expirationSub: Subscription;
+  private backend: Backend;
 
   constructor(private http: HttpClient,
-              private router: Router) {
-  }
+              private router: Router,
+              private backendSelectService: BackendSelectService) {
 
+    // No destroy as the service lives for the application's lifetime
+    this.backendSelectService.emitter.subscribe(backend => {
+      console.log('Catching backend emit:', backend);
+      this.backend = backend;
+    });
+  }
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
@@ -35,16 +43,24 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    this.handleAuth(AuthService.LOGIN_URL, email, password);
+    this.handleAuth(this.URL('login'), email, password);
   }
 
   signup(email: string, password: string) {
-    this.handleAuth(AuthService.SIGNUP_URL, email, password);
+    this.handleAuth(this.URL('signup'), email, password);
   }
 
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['login']);
+  }
+
+  private URL(path: string): string {
+    if (!this.backend.paths[path]) {
+      throw new Error(`Invalid path: '${path}'`);
+    }
+
+    return `${HOST}${this.backend.paths[path]}`;
   }
 
   private handleAuth(url: string, email: string, password) {
@@ -55,7 +71,12 @@ export class AuthService {
       .post<AuthResponse>(url, {email, pass: password}, {headers})
       .pipe(take(1))
       .subscribe(data => {
-        console.log('Successfully signed up!');
+
+        if (this.backend.bugs.signupExtraParens) {
+          if (url === this.URL('signup')) {
+            data.token = data.token.slice(1, data.token.length - 1);
+          }
+        }
         localStorage.setItem('token', data.token);
         const tokenExpirationDate = this.helper.getTokenExpirationDate(data.token);
         this.expirationSub = interval(1000).subscribe(() => {

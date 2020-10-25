@@ -13,7 +13,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (request.url.endsWith('/login')) { // Not really a problem anyways
+    if (!this.token) {
       return next.handle(request);
     }
 

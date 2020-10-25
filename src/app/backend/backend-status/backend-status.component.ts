@@ -16,7 +16,6 @@ export class BackendStatusComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('Destroying: should I unsubscribe?');
     this.sub.unsubscribe();
   }
 

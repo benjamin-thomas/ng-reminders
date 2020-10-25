@@ -16,7 +16,7 @@ export class BackendSelectService {
     if (json === null) {
       return null;
     }
-    return new Backend(json.name, json.config);
+    return new Backend(json.name, json.paths);
   }
 
   save(backend: Backend) {

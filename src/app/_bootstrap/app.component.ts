@@ -8,7 +8,7 @@ import {filter} from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  afterLogin = false;
+  showNavBar = false;
 
   constructor(private router: Router) {
   }
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(evt => evt instanceof NavigationEnd)
     ).subscribe((nav: NavigationEnd) => {
-      this.afterLogin = nav.url !== '/login';
+      this.showNavBar = !['/login', '/signup', '/select-backend'].includes(nav.url);
     });
 
   }
