@@ -1,0 +1,15 @@
+<h1>Select a backend!</h1>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <select id="backend-select" formControlName="backendName">
+
+    <option *ngFor="let option of options" [ngValue]="option.value">
+      {{ option.name}}
+    </option>
+
+  </select>
+
+  <button>Save</button>
+
+</form>

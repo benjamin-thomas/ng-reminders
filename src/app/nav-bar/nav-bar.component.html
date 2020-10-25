@@ -2,7 +2,9 @@
 
   <nav id="left-nav">
     <ul>
-      <li>Ng Reminders</li>
+      <li>
+        <a routerLink="/">Ng Reminders</a>
+      </li>
     </ul>
   </nav>
 
@@ -10,18 +12,11 @@
 
     <ul>
 
-      <li>
-        <a routerLink="/login">Login (temp)</a>
-      </li>
-
       <li appExpandMenu>
-        Reminders
+        Config
         <ul class="submenu">
           <li>
-            <a routerLink="/reminders/list">List</a>
-          </li>
-          <li>
-            <a routerLink="/reminders/add">Add</a>
+            <a routerLink="/select-backend">Select backend</a>
           </li>
         </ul>
       </li>
