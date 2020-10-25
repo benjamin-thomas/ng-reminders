@@ -11,6 +11,7 @@ import {LogoutComponent} from '../credentials/components/logout/logout.component
 const routes: Routes = [
   {
     path: '', canActivate: [AuthGuard], children: [
+      { path: '', component: RemindersListComponent}, // default route
       {
         path: 'reminders', children: [
           {path: 'list', component: RemindersListComponent},
