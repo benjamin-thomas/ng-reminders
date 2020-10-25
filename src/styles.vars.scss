@@ -31,9 +31,12 @@ $nav-bar-hover-color: #f75990;
 // Tables
 $table-border-color: #ececec;
 $table-hover-bg-color: #F8F8F8;
-$table-hover-text-color: #282828;
+//$table-hover-text-color: #282828;
+$table-hover-text-color: $nav-bar-color;
 
 // Buttons
-$btn-color: #0049B7;
-$btn-hover-color: #f75990;
+$btn-text-color: #ededed;
+$btn-bg-color: $nav-bar-color;
+$btn-hover-bg-color: #f75990;
+$btn-hover-text-color: darken($btn-hover-bg-color, 35);
 

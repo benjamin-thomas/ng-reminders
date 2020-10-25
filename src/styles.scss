@@ -3,7 +3,6 @@
 // Google Fonts
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-
 @import "styles.vars";
 
 // Styles
@@ -18,18 +17,30 @@ h1, h2, h3, h4, h5, h6, th {
 }
 
 .btn {
-  background: $btn-color;
-  padding: 1rem;
-  border-radius: 7px;
   text-decoration: none;
-  color: white;
-  font-weight: 600;
-  font-size: 1.1rem;
+  border-radius: 20px;
+  border: none;
+  background-color: $btn-bg-color;
+  color: $btn-text-color;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 12px 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 3rem 0;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25),
+  0 2px 2px rgba(0, 0, 0, 0.22);
 }
 
 .btn:hover {
-  background: $btn-hover-color;
+  background-color: $btn-hover-bg-color;
+  color: $btn-hover-text-color;
 }
+
+.btn:focus {
+  outline: none;
+}
+
 
 #container-narrow, #container-wide {
   background: white;
@@ -73,6 +84,8 @@ thead th {
 tbody tr:hover {
   background: $table-hover-bg-color;
   color: $table-hover-text-color;
+  font-weight: 600;
+  letter-spacing: -0.2px; // compensates font-weight spread
 }
 
 tbody tr:first-of-type td {
