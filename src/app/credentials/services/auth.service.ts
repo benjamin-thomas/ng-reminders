@@ -25,7 +25,7 @@ export class AuthService {
               private router: Router,
               private backendSelectService: BackendSelectService) {
 
-    // No destroy as the service lives for the application's lifetime
+    // No unsubscription as the service lives for the application's lifetime
     this.backendSelectService.emitter.subscribe(backend => {
       console.log('Catching backend emit:', backend);
       this.backend = backend;
@@ -41,6 +41,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
+    console.log(this.backend.loginURL());
     this.handleAuth(this.backend.loginURL(), email, password);
   }
 

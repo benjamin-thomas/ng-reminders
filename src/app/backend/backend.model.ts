@@ -1,6 +1,8 @@
 export type BackendPaths = {
   login: string,
   signup: string,
+  reminder: string,
+  reminders: string,
 };
 
 type ApiBugs = {
@@ -24,6 +26,8 @@ export class Backend {
     new Backend('PostgREST', {
       login: '/rpc/login',
       signup: '/rpc/signup',
+      reminder: '/reminders?id=eq.',
+      reminders: '/reminders',
     }, {
       signupExtraParens: true,
     }),
@@ -31,6 +35,8 @@ export class Backend {
     new Backend('Java/Spring boot (TODO)', {
       login: '/TODO',
       signup: '/TODO',
+      reminder: '/TODO',
+      reminders: '/TODO',
     }),
   ];
 
@@ -48,4 +54,11 @@ export class Backend {
     return `${this.host}${this.paths.login}`;
   }
 
+  reminderURL(id: number): string {
+    return `${this.host}${this.paths.reminder}${id}`;
+  }
+
+  remindersURL(): string {
+    return `${this.host}${this.paths.reminders}`;
+  }
 }

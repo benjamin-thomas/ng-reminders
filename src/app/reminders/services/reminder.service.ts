@@ -2,14 +2,22 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Reminder} from '../reminder.model';
 import {Observable} from 'rxjs';
+import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
+import {Backend} from '../../backend/backend.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReminderService {
-  private static readonly URL = 'http://localhost:4444/reminders';
+  private backend: Backend;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private backendSelectService: BackendSelectService) {
+    // No unsubscription as the service lives for the application's lifetime
+    this.backendSelectService.emitter.subscribe(backend => {
+      console.log('Catching backend emit:', backend);
+      this.backend = backend;
+    });
   }
 
   private static get singleResourceHeader() {
@@ -18,27 +26,23 @@ export class ReminderService {
     });
   }
 
-  private static URL2(id) {
-    return `http://localhost:4444/reminders?id=eq.${id}`;
-  }
-
   getAll(): Observable<Reminder[]> {
     return this.http
-      .get<Reminder[]>(ReminderService.URL + '?order=due.asc');
+      .get<Reminder[]>(this.backend.remindersURL() + '?order=due.asc');
   }
 
   create(reminder: Reminder) {
     return this.http
-      .post<Reminder>(ReminderService.URL, reminder);
+      .post<Reminder>(this.backend.remindersURL(), reminder);
   }
 
   get(id: number) {
     return this.http
-      .get<Reminder>(ReminderService.URL2(id), {headers: ReminderService.singleResourceHeader});
+      .get<Reminder>(this.backend.reminderURL(id), {headers: ReminderService.singleResourceHeader});
   }
 
   update(id: number, reminder: Reminder) {
     return this.http
-      .patch<Reminder>(ReminderService.URL2(id), reminder, {headers: ReminderService.singleResourceHeader});
+      .patch<Reminder>(this.backend.reminderURL(id), reminder, {headers: ReminderService.singleResourceHeader});
   }
 }
