@@ -9,6 +9,13 @@ type ApiBugs = {
 
 export class Backend {
 
+  constructor(public name: string,
+              public paths: BackendPaths,
+              public bugs: ApiBugs = {
+                signupExtraParens: false,
+              }) {
+  }
+
   static available: Backend[] = [
     // { name: 'Golang/Gin (TODO)'},
     // { name: 'Golang/Std lib (TODO)'},
@@ -27,11 +34,18 @@ export class Backend {
     }),
   ];
 
-  constructor(public name: string,
-              public paths: BackendPaths,
-              public bugs: ApiBugs = {
-                signupExtraParens: false,
-              }) {
+  private host: string;
+
+  setHost(host: string) {
+    this.host = host;
+  }
+
+  signupURL(): string {
+    return `${this.host}${this.paths.signup}`;
+  }
+
+  loginURL(): string {
+    return `${this.host}${this.paths.login}`;
   }
 
 }

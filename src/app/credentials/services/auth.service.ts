@@ -6,14 +6,12 @@ import {Router} from '@angular/router';
 import {interval, Subscription} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
 import {Backend} from '../../backend/backend.model';
-import {environment} from '../../../environments/environment';
 
 export interface AuthResponse {
   token: string;
 }
 
 const SECONDS = 1000;
-const HOST = environment.apiHost;
 
 @Injectable({
   providedIn: 'root'
@@ -43,24 +41,16 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    this.handleAuth(this.URL('login'), email, password);
+    this.handleAuth(this.backend.loginURL(), email, password);
   }
 
   signup(email: string, password: string) {
-    this.handleAuth(this.URL('signup'), email, password);
+    this.handleAuth(this.backend.signupURL(), email, password);
   }
 
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['login']);
-  }
-
-  private URL(path: string): string {
-    if (!this.backend.paths[path]) {
-      throw new Error(`Invalid path: '${path}'`);
-    }
-
-    return `${HOST}${this.backend.paths[path]}`;
   }
 
   private handleAuth(url: string, email: string, password) {
@@ -73,7 +63,7 @@ export class AuthService {
       .subscribe(data => {
 
         if (this.backend.bugs.signupExtraParens) {
-          if (url === this.URL('signup')) {
+          if (url === this.backend.signupURL()) {
             data.token = data.token.slice(1, data.token.length - 1);
           }
         }

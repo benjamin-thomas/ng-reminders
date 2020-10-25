@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Backend} from '../../backend.model';
+import {environment} from '../../../../environments/environment';
 
 const KEY = 'backendName';
 
@@ -16,7 +17,9 @@ export class BackendSelectService {
     if (json === null) {
       return null;
     }
-    return new Backend(json.name, json.paths);
+    const backend = new Backend(json.name, json.paths, json.bugs);
+    backend.setHost(environment.apiHost);
+    return backend;
   }
 
   save(backend: Backend) {
