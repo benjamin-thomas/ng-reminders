@@ -6,14 +6,14 @@ import {Router} from '@angular/router';
 import {interval, Subscription} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
 import {Backend} from '../../backend/backend.model';
+import {environment} from '../../../environments/environment';
 
-// http POST http://localhost:4444/rpc/login email=user1@example.com pass=yo
 export interface AuthResponse {
   token: string;
 }
 
 const SECONDS = 1000;
-const HOST = 'http://localhost:4444';
+const HOST = environment.apiHost;
 
 @Injectable({
   providedIn: 'root'
