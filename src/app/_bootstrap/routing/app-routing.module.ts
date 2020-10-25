@@ -8,10 +8,11 @@ import {ReminderAddComponent} from '../../reminders/reminder-add/reminder-add.co
 import {ReminderEditComponent} from '../../reminders/reminder-edit/reminder-edit.component';
 import {LogoutComponent} from '../../credentials/components/logout/logout.component';
 import {BackendSelectComponent} from '../../backend/backend-select/backend-select.component';
+import {BackendSelectedGuard} from '../../backend/backend-selected.guard';
 
 const routes: Routes = [
   {
-    path: '', canActivate: [AuthGuard], children: [
+    path: '', canActivate: [AuthGuard, BackendSelectedGuard], children: [
       { path: '', component: RemindersListComponent}, // default route
       {
         path: 'reminders', children: [

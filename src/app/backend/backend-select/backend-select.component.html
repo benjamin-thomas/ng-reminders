@@ -2,6 +2,7 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
+  <label for="backend-select" style="display: none"></label>
   <select id="backend-select" formControlName="backendName">
 
     <option *ngFor="let option of options" [ngValue]="option.value">

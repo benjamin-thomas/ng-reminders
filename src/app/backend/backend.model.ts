@@ -10,23 +10,27 @@ export class Backend {
     {value: 'node-express', name: 'Node/Express (TODO)'},
     {value: 'postgrest', name: 'PostgREST'},
   ];
+
   displayName: string;
+  isValid = false;
 
-  constructor(value) {
-    const found = Backend.formOptions.find(opt => {
+  constructor(private value) {
+    if (!this._hasValidValue()) {
+      this.displayName = 'NOT_FOUND';
+      return;
+    }
+
+    this.isValid = true;
+    this.displayName = Backend.formOptions.find(opt => {
       return opt.value === value;
-    });
+    }).name;
+  }
 
-    if (!found) {
-      throw new Error('Backend value not found, this should never happen!');
-    }
-
-    let displayName = found.name;
-    if (displayName === NONE) {
-      displayName = 'NONE';
-    }
-
-    this.displayName = displayName;
+  private _hasValidValue(): boolean {
+    return Backend.formOptions
+      .filter(option => option.name !== NONE)
+      .map(option => option.value)
+      .includes(this.value);
   }
 
 }
