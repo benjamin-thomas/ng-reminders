@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Reminder} from '../reminder.model';
-import {ReminderService} from '../../../reminder.service';
+import {ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
-import {ReminderService} from '../../../reminder.service';
+import {ReminderService} from '../services/reminder.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {formatDate} from '@angular/common';
 

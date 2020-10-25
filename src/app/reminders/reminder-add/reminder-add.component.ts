@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ReminderService} from '../../../reminder.service';
+import {ReminderService} from '../services/reminder.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {formatDate} from '@angular/common';
 import {HttpErrorResponse} from '@angular/common/http';
