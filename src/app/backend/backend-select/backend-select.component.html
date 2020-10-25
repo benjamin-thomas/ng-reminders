@@ -3,10 +3,11 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
   <label for="backend-select" style="display: none"></label>
-  <select id="backend-select" formControlName="backendName">
+  <select id="backend-select" formControlName="backend">
 
-    <option *ngFor="let option of options" [ngValue]="option.value">
-      {{ option.name}}
+    <option value="">---</option>
+    <option *ngFor="let backend of backends" [ngValue]="backend">
+      {{ backend.name}}
     </option>
 
   </select>

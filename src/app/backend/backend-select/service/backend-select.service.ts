@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {Backend} from '../../backend.model';
 
 const KEY = 'backendName';
 
@@ -7,14 +8,19 @@ const KEY = 'backendName';
   providedIn: 'root'
 })
 export class BackendSelectService {
-  backendName = new BehaviorSubject<string>(this.get());
 
-  get(): string {
-    return localStorage.getItem(KEY);
+  emitter = new BehaviorSubject<Backend>(this.get());
+
+  get(): Backend {
+    const json = JSON.parse(localStorage.getItem(KEY));
+    if (json === null) {
+      return null;
+    }
+    return new Backend(json.name, json.config);
   }
 
-  save(backendName: string) {
-    localStorage.setItem(KEY, backendName);
-    this.backendName.next(backendName);
+  save(backend: Backend) {
+    localStorage.setItem(KEY, JSON.stringify(backend));
+    this.emitter.next(backend);
   }
 }

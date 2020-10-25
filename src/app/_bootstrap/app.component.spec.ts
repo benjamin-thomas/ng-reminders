@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'ng-reminders'`, () => {
+  it(`should have a false afterLogin property`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ng-reminders');
+    expect(app.afterLogin).toEqual(false);
   });
 
   it('should render title', () => {

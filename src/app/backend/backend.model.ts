@@ -1,36 +1,27 @@
-const NONE = '---';
+type Config = {
+  login_path: string,
+  signup_path: string,
+};
 
 export class Backend {
 
-  static formOptions: { value: string, name: string }[] = [
-    {value: null, name: NONE},
-    {value: 'golang-gin', name: 'Golang/Gin (TODO)'},
-    {value: 'golang-stdlib', name: 'Golang/Std lib (TODO)'},
-    {value: 'java-springboot', name: 'Java/Spring boot (TODO)'},
-    {value: 'node-express', name: 'Node/Express (TODO)'},
-    {value: 'postgrest', name: 'PostgREST'},
+  static available: Backend[] = [
+    // { name: 'Golang/Gin (TODO)'},
+    // { name: 'Golang/Std lib (TODO)'},
+    // { name: 'Node/Express (TODO)'},
+
+    new Backend('PostgREST', {
+      login_path: '/rpc/login',
+      signup_path: '/rpc/signup',
+    }),
+
+    new Backend('Java/Spring boot (TODO)', {
+      login_path: '/TODO',
+      signup_path: '/TODO',
+    }),
   ];
 
-  displayName: string;
-  isValid = false;
-
-  constructor(private value) {
-    if (!this._hasValidValue()) {
-      this.displayName = 'NOT_FOUND';
-      return;
-    }
-
-    this.isValid = true;
-    this.displayName = Backend.formOptions.find(opt => {
-      return opt.value === value;
-    }).name;
-  }
-
-  private _hasValidValue(): boolean {
-    return Backend.formOptions
-      .filter(option => option.name !== NONE)
-      .map(option => option.value)
-      .includes(this.value);
+  constructor(public name: string, public config: Config) {
   }
 
 }

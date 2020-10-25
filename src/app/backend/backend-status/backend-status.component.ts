@@ -9,7 +9,7 @@ import {Backend} from '../backend.model';
   styleUrls: ['./backend-status.component.scss']
 })
 export class BackendStatusComponent implements OnInit, OnDestroy {
-  backendName: string;
+  backend: Backend;
   private sub: Subscription;
 
   constructor(private backendSelectService: BackendSelectService) {
@@ -22,8 +22,8 @@ export class BackendStatusComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.sub = this.backendSelectService.backendName.subscribe(val => { // BehaviorSubject
-      this.backendName = new Backend(val).displayName;
+    this.sub = this.backendSelectService.emitter.subscribe(backend => { // BehaviorSubject
+      this.backend = backend;
     });
   }
 

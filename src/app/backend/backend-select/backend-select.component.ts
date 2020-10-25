@@ -11,10 +11,9 @@ import {Backend} from '../backend.model';
 })
 export class BackendSelectComponent {
   form = new FormGroup({
-    backendName: new FormControl(this.backendSelectService.get(), Validators.required),
+    backend: new FormControl(this.backendSelectService.get(), Validators.required),
   });
-
-  options = Backend.formOptions;
+  backends = Backend.available;
 
   constructor(private backendSelectService: BackendSelectService,
               private router: Router) {
@@ -26,7 +25,7 @@ export class BackendSelectComponent {
       return;
     }
 
-    this.backendSelectService.save(this.form.value.backendName);
+    this.backendSelectService.save(this.form.value.backend);
     this.router.navigate(['']);
   }
 }

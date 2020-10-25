@@ -8,9 +8,7 @@ import {filter} from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'ng-reminders';
   afterLogin = false;
-
 
   constructor(private router: Router) {
   }
