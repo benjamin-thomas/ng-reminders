@@ -41,7 +41,6 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    console.log(this.backend.loginURL());
     this.handleAuth(this.backend.loginURL(), email, password);
   }
 

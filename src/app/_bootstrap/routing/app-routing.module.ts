@@ -23,6 +23,7 @@ const routes: Routes = [
       }
     ]
   },
+  // Make sure to update AuthInterceptor to prevent unwanted auth headers injection
   {path: 'login', component: LoginComponent, canActivate: [BackendSelectedGuard]},
   {path: 'logout', component: LogoutComponent},
   {path: 'signup', component: SignupComponent, canActivate: [BackendSelectedGuard]},

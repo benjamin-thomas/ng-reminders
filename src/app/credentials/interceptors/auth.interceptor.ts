@@ -2,6 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
+const excludes = [
+  '/signup',
+  '/login',
+  '/select-backend',
+];
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
@@ -13,10 +18,18 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (!this.token) {
+    let exclude: string;
+    excludes.forEach(pattern => {
+      if (request.url.endsWith(pattern)) {
+        exclude = request.url;
+      }
+    });
+    if (exclude) {
+      console.log('Excluding auth for:', exclude);
       return next.handle(request);
     }
 
+    console.log('Setting bearer auth for:', request.url);
     return next.handle(request.clone({
       setHeaders: {
         Authorization: `Bearer ${this.token}`
