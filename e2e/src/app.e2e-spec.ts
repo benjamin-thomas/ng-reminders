@@ -8,9 +8,9 @@ describe('workspace-project App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
+  it('should require setting the backend', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('ng-reminders app is running!');
+    expect(page.getTitleText()).toEqual('Select a backend!');
   });
 
   afterEach(async () => {
