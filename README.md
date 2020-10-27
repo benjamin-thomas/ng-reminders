@@ -33,3 +33,29 @@ http POST http://localhost:4444/todos "Authorization:Bearer $TOKEN" task="learn 
 cd ./api/postgrest/
 ./manage/dev/full_db_setup [redo]
 ```
+
+---
+
+## Cypress setup
+
+[Source](https://dev.to/angular/ci-ready-e2e-tests-for-angular-with-cypress-and-typescript-in-under-60-minutes-4f30)
+
+1. ng add @briebug/cypress-schematic --addCypressTestScripts
+2. Update .gitignore
+   ```
+   # Cypress
+   /cypress/videos/
+   /cypress/screenshots/
+   ```
+3. Run one of those:
+   - ng e2e [--headless] OR npm e2e
+   - npm cy:open
+   - npm cy:run
+
+3. Setup CI like (for now) oneliner (will need to serve production build later)
+   - npm install --save-dev start-server-and-test
+   - update package.json
+      ```
+      "e2e:ci": "start-server-and-test start http://ng-reminders.test:4200 cy:run",
+      ```
+   - npm run e2e:ci
