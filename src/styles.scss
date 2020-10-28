@@ -81,7 +81,7 @@ thead th {
   text-align: left;
 }
 
-tbody tr:hover {
+tbody tr:hover, tbody tr.selected {
   background: $table-hover-bg-color;
   color: $table-hover-text-color;
   font-weight: 600;

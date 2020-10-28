@@ -7,6 +7,11 @@
       routerLink="/reminders/add">Add a reminder!</a>
   </div>
 
+  <a #editSelectedResource
+     hidden
+     [routerLink]="['/reminders', 'edit', this.reminders[this.selectedIdx].id]">
+    Edit</a>
+
   <table>
     <thead>
     <tr>
@@ -21,13 +26,15 @@
 
     <tr
       (click)="editResource.click()"
-      *ngFor="let r of reminders">
+      (document:keydown.enter)="editSelectedResource.click()"
+      *ngFor="let r of reminders; let idx=index"
+      [class.selected]="selectedIdx === idx"
+    >
       <td>{{r.content}}</td>
       <td>{{r.due | date:'short'}}</td>
       <td>{{r.done}}</td>
       <td style="display: none">
-        <a
-          #editResource [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
+        <a #editResource [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
       </td>
     </tr>
 
