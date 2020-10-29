@@ -9,6 +9,7 @@
   </div>
 
   <a #editSelectedResource
+     *ngIf="this.reminders"
      hidden
      [routerLink]="['/reminders', 'edit', this.reminders[this.selectedIdx].id]">
     Edit</a>
