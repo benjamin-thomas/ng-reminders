@@ -4,7 +4,8 @@
       class="btn"
       #addReminder
       (document:keydown.alt.n)="addReminder.click()"
-      routerLink="/reminders/add">Add a reminder!</a>
+      style="cursor:pointer"
+      routerLink="/reminders/add">Ajouter un rappel</a>
   </div>
 
   <a #editSelectedResource
@@ -15,9 +16,9 @@
   <table>
     <thead>
     <tr>
-      <th>Content</th>
-      <th>Due</th>
-      <th>Done</th>
+      <th>Objet</th>
+      <th>Du</th>
+      <th>Fait ?</th>
       <th style="display: none">Links</th>
     </tr>
     </thead>

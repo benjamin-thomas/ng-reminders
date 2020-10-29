@@ -3,10 +3,10 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <h1>{{ title }}</h1>
 
-      <label class="align-left" for="due">Due</label>
+      <label class="align-left" for="due">Du</label>
       <input type="datetime-local" id="due" formControlName="due">
 
-      <label class="align-left" for="content">Content</label>
+      <label class="align-left" for="content">Objet</label>
 
       <textarea id="content" rows="10"
                 #content
@@ -15,7 +15,7 @@
       <button
         #submit
         (document:keydown.control.enter)="submit.click()"
-        type="submit" class="btn">Save
+        type="submit" class="btn">Enregistrer
       </button>
 
     </form>
