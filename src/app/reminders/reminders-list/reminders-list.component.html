@@ -25,14 +25,22 @@
     <tbody>
 
     <tr
-      (click)="editResource.click()"
       (document:keydown.enter)="editSelectedResource.click()"
+      (document:keydown.space)="selectedIdx === idx && doneCbx.click()"
       *ngFor="let r of reminders; let idx=index"
+      [class.done]="r.done"
       [class.selected]="selectedIdx === idx"
+      (click)="selectedIdx = idx"
+      (dblclick)="editResource.click()"
     >
       <td>{{r.content}}</td>
       <td>{{r.due | date:'short'}}</td>
-      <td>{{r.done}}</td>
+      <td
+        (click)="toggleDone(r)"
+        style="cursor: pointer"
+        >
+        <input type="checkbox" [(ngModel)]="r.done" #doneCbx>
+      </td>
       <td style="display: none">
         <a #editResource [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
       </td>
