@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Reminder} from '../reminder.model';
 import {ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -12,7 +12,10 @@ export class RemindersListComponent implements OnInit {
   reminders: Reminder[];
   selectedIdx = 0;
 
+  @ViewChild('editSelectedResource') editSelectedResource: HTMLAnchorElement;
+
   constructor(private reminderService: ReminderService) {
+
   }
 
   ngOnInit(): void {
