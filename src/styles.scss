@@ -81,11 +81,19 @@ thead th {
   text-align: left;
 }
 
-tbody tr:hover, tbody tr.selected {
+tbody tr.selected.done {
+  color:#c0c0c0;
+}
+tbody tr.selected {
   background: $table-hover-bg-color;
   color: $table-hover-text-color;
   font-weight: 600;
   letter-spacing: -0.2px; // compensates font-weight spread
+}
+
+tbody tr.done {
+  color:#ccc;
+  text-decoration: line-through;
 }
 
 tbody tr:first-of-type td {
@@ -95,4 +103,10 @@ tbody tr:first-of-type td {
 .stick-at-top-hack {
   // Weird Angular bug, not sure why this works
   border-top: 1px solid transparent;
+}
+
+// Checkbox
+
+tr.done input[type=checkbox] {
+  opacity: .2;
 }
