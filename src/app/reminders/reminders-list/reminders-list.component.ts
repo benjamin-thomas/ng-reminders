@@ -90,20 +90,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   toggleDone(r: Reminder) {
-    // r.done = !r.done;
     const updated = {
       ...r,
       done: !r.done,
     };
-    // remove email and id
-    // delete updated['email'] ; // Why am I getting this field here?? Not handled by the server
+
     delete updated.id;
-    // console.log('updated:', updated);
     this.reminderService.update(r.id, updated).subscribe(() => {
-      // console.log('Server handled!');
-      // r = updated; // Not updating...
-      // console.log('original:', r);
-      // console.log('updated:', updated);
       // const updated2 = {
       //   id: r.id,
       //   ...updated,
