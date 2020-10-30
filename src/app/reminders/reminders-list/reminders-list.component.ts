@@ -95,16 +95,8 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       done: !r.done,
     };
 
-    delete updated.id;
     this.reminderService.update(r.id, updated).subscribe(() => {
-      // const updated2 = {
-      //   id: r.id,
-      //   ...updated,
-      // };
-      // console.log('updated2:', updated2);
-      // r = updated2; // Not working
-      // r = {...updated2}; // Not working either
-      r.done = updated.done;
+      r = updated;
     });
   }
 }

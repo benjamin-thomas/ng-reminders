@@ -42,7 +42,9 @@ export class ReminderService {
   }
 
   update(id: number, reminder: Reminder) {
+    const rem = {...reminder};
+    delete rem.id; // Always ensure I strip away the id field
     return this.http
-      .patch<Reminder>(this.backend.reminderURL(id), reminder, {headers: ReminderService.singleResourceHeader});
+      .patch<Reminder>(this.backend.reminderURL(id), rem, {headers: ReminderService.singleResourceHeader});
   }
 }
