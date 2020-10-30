@@ -32,7 +32,7 @@
       *ngFor="let r of reminders; let idx=index"
       [class.done]="r.done"
       [class.selected]="selectedIdx === idx"
-      (click)="selectedIdx = idx"
+      (click)="selectedChange.next(idx)"
       (dblclick)="editResource.click()"
     >
       <td>{{r.content}}</td>
