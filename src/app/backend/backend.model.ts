@@ -1,64 +1,25 @@
-export type BackendPaths = {
-  login: string,
-  signup: string,
-  reminder: string,
-  reminders: string,
-};
+interface BackendURLs {
+  loginURL: () => string;
+  signupURL: () => string;
+  reminderURL: (id: number) => string;
+  remindersURL: (ids?: number[]) => string;
+  remindersSortURL: () => string;
+}
 
-type ApiBugs = {
-  signupExtraParens: boolean,
-};
+export abstract class Backend implements BackendURLs {
+  protected host: string;
 
-export class Backend {
-
-  constructor(public name: string,
-              public paths: BackendPaths,
-              public bugs: ApiBugs = {
-                signupExtraParens: false,
-              }) {
-  }
-
-  static available: Backend[] = [
-    // { name: 'Golang/Gin (TODO)'},
-    // { name: 'Golang/Std lib (TODO)'},
-    // { name: 'Node/Express (TODO)'},
-
-    new Backend('PostgREST', {
-      login: '/rpc/login',
-      signup: '/rpc/signup',
-      reminder: '/reminders?id=eq.',
-      reminders: '/reminders',
-    }, {
-      signupExtraParens: true,
-    }),
-
-    new Backend('Java/Spring boot (TODO)', {
-      login: '/TODO',
-      signup: '/TODO',
-      reminder: '/TODO',
-      reminders: '/TODO',
-    }),
-  ];
-
-  private host: string;
-
-  setHost(host: string) {
+  constructor(host: string) {
     this.host = host;
   }
 
-  signupURL(): string {
-    return `${this.host}${this.paths.signup}`;
-  }
+  abstract loginURL(): string;
 
-  loginURL(): string {
-    return `${this.host}${this.paths.login}`;
-  }
+  abstract signupURL(): string;
 
-  reminderURL(id: number): string {
-    return `${this.host}${this.paths.reminder}${id}`;
-  }
+  abstract reminderURL(id: number): string;
 
-  remindersURL(): string {
-    return `${this.host}${this.paths.reminders}`;
-  }
+  abstract remindersURL(ids?: number[]): string;
+
+  abstract remindersSortURL(): string;
 }

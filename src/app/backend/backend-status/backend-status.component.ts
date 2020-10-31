@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {BackendSelectService} from '../backend-select/service/backend-select.service';
-import {Backend} from '../backend.model';
 
 @Component({
   selector: 'app-backend-status',
@@ -9,7 +8,7 @@ import {Backend} from '../backend.model';
   styleUrls: ['./backend-status.component.scss']
 })
 export class BackendStatusComponent implements OnInit, OnDestroy {
-  backend: Backend;
+  backendName: string;
   private sub: Subscription;
 
   constructor(private backendSelectService: BackendSelectService) {
@@ -21,8 +20,8 @@ export class BackendStatusComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.sub = this.backendSelectService.emitter.subscribe(backend => { // BehaviorSubject
-      this.backend = backend;
+    this.sub = this.backendSelectService.emitter.subscribe(([, backendName]) => { // BehaviorSubject
+      this.backendName = backendName;
     });
   }
 

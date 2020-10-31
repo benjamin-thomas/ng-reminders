@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Reminder} from '../reminder.model';
 import {ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -14,7 +14,6 @@ import {take} from 'rxjs/operators';
 export class RemindersListComponent implements OnInit, OnDestroy {
   reminders: Reminder[];
   selectedChange = new BehaviorSubject<number>(0);
-  @ViewChild('editSelectedResource') editSelectedResource: HTMLAnchorElement;
   selectedIdx: number;
   private selectChangeSub: Subscription;
 
@@ -55,14 +54,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         },
       });
     });
-
-    this.reminderService.getAll()
-      .subscribe(data => {
-        this.reminders = data;
-      }, (err: HttpErrorResponse) => {
-        console.log(err.error);
-        alert('Something went wrong!');
-      });
+    this.fetchReminders();
   }
 
   @HostListener('document:keydown.arrowDown', ['$event'])
@@ -98,5 +90,67 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     this.reminderService.update(r.id, updated).subscribe(() => {
       r = updated;
     });
+  }
+
+  doneIds(): number[] {
+    if (!this.reminders) {
+      return [];
+    }
+
+    return this.reminders
+      .filter(r => r.done)
+      .map(r => r.id);
+  }
+
+  doneCount(): number {
+    return this.doneIds().length;
+  }
+
+  @HostListener('document:keydown.d')
+  @HostListener('document:keydown.delete')
+  deleteDone() {
+    this.reminderService
+      .deleteMany(this.doneIds())
+      .subscribe(() => {
+        console.log('Delete many success');
+        this.fetchReminders();
+      }, (error: HttpErrorResponse) => {
+        console.log('ERROR', error.error);
+      });
+  }
+
+  editSelectedReminder() {
+    const selected = this.reminders[this.selectedIdx];
+    this.router.navigate(['reminders', 'edit', selected.id], {
+      queryParams: {
+        selectedRow: this.selectedIdx + 1
+      }
+    });
+  }
+
+  gotoReminderAdd($event: KeyboardEvent) {
+    // Prevent the pressed key to populate the form on the next page
+    // Another solution would be to use the keyup event, but I don't like its delay
+    $event.preventDefault();
+
+    this.router.navigate(['reminders', 'add'], {
+      queryParams: {
+        selectedRow: this.selectedIdx + 1
+      }
+    });
+  }
+
+  private fetchReminders() {
+    this.reminderService.getAll()
+      .subscribe(data => {
+        this.reminders = data;
+        if (this.selectedIdx >= this.reminders.length) {
+          // Ensure highlighted row is always logical, especially after delete
+          this.selectedChange.next(this.reminders.length - 1);
+        }
+      }, (err: HttpErrorResponse) => {
+        console.log(err.error);
+        alert('Something went wrong!');
+      });
   }
 }

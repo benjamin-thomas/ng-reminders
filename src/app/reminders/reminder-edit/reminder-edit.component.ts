@@ -17,6 +17,7 @@ export class ReminderEditComponent implements OnInit {
     due: new FormControl(),
   });
   private id: number;
+  private selectedRow: number;
 
   constructor(private reminderService: ReminderService,
               private router: Router,
@@ -25,6 +26,8 @@ export class ReminderEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
+      this.selectedRow = params.selectedRow;
+
       this.reminderService.get(params.id).subscribe(reminder => {
         this.id = reminder.id;
 
@@ -39,7 +42,11 @@ export class ReminderEditComponent implements OnInit {
 
   onValidSubmit() {
     this.reminderService.update(this.id, this.form.value).subscribe(() => {
-      this.router.navigate(['/reminders', 'list']);
+      this.router.navigate(['/reminders', 'list'], {
+        queryParams: {
+          selectedRow: this.selectedRow
+        }
+      });
     });
   }
 }

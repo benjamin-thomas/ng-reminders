@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {interval, Subscription} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
 import {Backend} from '../../backend/backend.model';
+import {PostgrestBackend} from '../../backend/postgrest-backend';
 
 export interface AuthResponse {
   token: string;
@@ -26,8 +27,8 @@ export class AuthService {
               private backendSelectService: BackendSelectService) {
 
     // No unsubscription as the service lives for the application's lifetime
-    this.backendSelectService.emitter.subscribe(backend => {
-      console.log('Catching backend emit:', backend);
+    this.backendSelectService.emitter.subscribe(([backend]) => {
+      console.log('[AUTH] Catching backend emit:', backend);
       this.backend = backend;
     });
   }
@@ -41,6 +42,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
+    console.log('Logging to:', this.backend.loginURL());
     this.handleAuth(this.backend.loginURL(), email, password);
   }
 
@@ -62,7 +64,7 @@ export class AuthService {
       .pipe(take(1))
       .subscribe(data => {
 
-        if (this.backend.bugs.signupExtraParens) {
+        if (this.backend instanceof PostgrestBackend) {
           if (url === this.backend.signupURL()) {
             data.token = data.token.slice(1, data.token.length - 1);
           }

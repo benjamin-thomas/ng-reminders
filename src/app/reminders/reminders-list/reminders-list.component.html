@@ -1,18 +1,26 @@
 <div id="container-wide">
+  <div
+    *ngIf="doneCount() > 0"
+    style="margin-left: 10px; ;margin-bottom: 30px;float:right;">
+    <a
+      class="btn"
+      style="cursor:pointer"
+      (click)="deleteDone()"
+      [ngPlural]="doneCount()"
+    >
+      <ng-template ngPluralCase="1">Effacer le rappel terminé</ng-template>
+      <ng-template ngPluralCase="other">Effacer les {{ doneCount() }} rappels terminés</ng-template>
+    </a>
+  </div>
+
   <div style="margin-bottom: 30px;float:right;">
     <a
       class="btn"
-      #addReminder
-      (document:keydown.alt.n)="addReminder.click()"
+      (document:keydown.n)="gotoReminderAdd($event)"
       style="cursor:pointer"
+      [queryParams]="{selectedRow: selectedIdx+1}"
       routerLink="/reminders/add">Ajouter un rappel</a>
   </div>
-
-  <a #editSelectedResource
-     *ngIf="this.reminders"
-     hidden
-     [routerLink]="['/reminders', 'edit', this.reminders[this.selectedIdx].id]">
-    Edit</a>
 
   <table>
     <thead>
@@ -27,25 +35,22 @@
     <tbody>
 
     <tr
-      (document:keydown.enter)="editSelectedResource.click()"
+      (document:keydown.enter)="editSelectedReminder()"
       (document:keydown.space)="selectedIdx === idx && doneCbx.click()"
+      (document:keydown.x)="selectedIdx === idx && doneCbx.click()"
       *ngFor="let r of reminders; let idx=index"
       [class.done]="r.done"
       [class.selected]="selectedIdx === idx"
       (click)="selectedChange.next(idx)"
-      (dblclick)="editResource.click()"
     >
       <td>{{r.content}}</td>
       <td>{{r.due | date:'short'}}</td>
-      <td
-        (click)="toggleDone(r)"
-        style="cursor: pointer"
-        >
-        <input type="checkbox" [(ngModel)]="r.done" #doneCbx>
+      <td>
+        <label>
+          <input type="checkbox" [(ngModel)]="r.done" #doneCbx>
+        </label>
       </td>
-      <td style="display: none">
-        <a #editResource [routerLink]="['/reminders', 'edit', r.id]">Edit</a>
-      </td>
+
     </tr>
 
     </tbody>

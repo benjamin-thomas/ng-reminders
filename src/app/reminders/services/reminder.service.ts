@@ -14,8 +14,8 @@ export class ReminderService {
   constructor(private http: HttpClient,
               private backendSelectService: BackendSelectService) {
     // No unsubscription as the service lives for the application's lifetime
-    this.backendSelectService.emitter.subscribe(backend => {
-      console.log('Catching backend emit:', backend);
+    this.backendSelectService.emitter.subscribe(([backend, name]) => {
+      console.log('Catching backend emit:', backend, '. Name:', name);
       this.backend = backend;
     });
   }
@@ -28,7 +28,7 @@ export class ReminderService {
 
   getAll(): Observable<Reminder[]> {
     return this.http
-      .get<Reminder[]>(this.backend.remindersURL() + '?order=due.asc,id.desc');
+      .get<Reminder[]>(this.backend.remindersSortURL());
   }
 
   create(reminder: Reminder) {
@@ -45,6 +45,11 @@ export class ReminderService {
     const rem = {...reminder};
     delete rem.id; // Always ensure I strip away the id field
     return this.http
-      .patch<Reminder>(this.backend.reminderURL(id), rem, {headers: ReminderService.singleResourceHeader});
+      .patch(this.backend.reminderURL(id), rem, {headers: ReminderService.singleResourceHeader});
+  }
+
+  deleteMany(ids: number[]) {
+    return this.http
+      .delete(this.backend.remindersURL(ids));
   }
 }

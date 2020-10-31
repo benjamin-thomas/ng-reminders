@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {Backend} from '../../backend.model';
 import {environment} from '../../../../environments/environment';
+import {BackendFactory, BackendNames} from '../../backend-factory';
 
 const KEY = 'backendName';
 
@@ -10,20 +11,21 @@ const KEY = 'backendName';
 })
 export class BackendSelectService {
 
-  emitter = new BehaviorSubject<Backend>(this.get());
+  emitter = new BehaviorSubject<[Backend, string]>(this.initSubject());
 
-  get(): Backend {
-    const json = JSON.parse(localStorage.getItem(KEY));
-    if (json === null) {
-      return null;
+  initSubject(): [Backend, string] {
+    const backendName: BackendNames = localStorage.getItem(KEY) as BackendNames;
+    if (backendName === null) {
+      return [null, 'NONE'];
     }
-    const backend = new Backend(json.name, json.paths, json.bugs);
-    backend.setHost(environment.apiHost);
-    return backend;
+    const backend = BackendFactory.create(backendName, environment.apiHost);
+    return [backend, backendName];
   }
 
-  save(backend: Backend) {
-    localStorage.setItem(KEY, JSON.stringify(backend));
-    this.emitter.next(backend);
+  save(backendName: BackendNames) {
+    localStorage.setItem(KEY, backendName);
+
+    const backend = BackendFactory.create(backendName, environment.apiHost);
+    this.emitter.next([backend, backendName]);
   }
 }

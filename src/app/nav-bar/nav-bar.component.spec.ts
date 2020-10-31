@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NavBarComponent } from './nav-bar2.component';
+import { NavBarComponent } from './nav-bar.component';
 
-describe('NavBar2Component', () => {
+describe('NavBarComponent', () => {
   let component: NavBarComponent;
   let fixture: ComponentFixture<NavBarComponent>;
 
@@ -22,4 +22,5 @@ describe('NavBar2Component', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });
