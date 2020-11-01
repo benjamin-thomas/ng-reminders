@@ -9,6 +9,7 @@ import {Backend} from '../../backend/backend.model';
   providedIn: 'root'
 })
 export class ReminderService {
+
   private backend: Backend;
 
   constructor(private http: HttpClient,
@@ -26,12 +27,19 @@ export class ReminderService {
     });
   }
 
+  private static convertTimestampsToLocalTZ(reminder: Reminder) {
+    // Angular forms return text only data, this brings back the TZ before sending to the API server
+    reminder.due = new Date(reminder.due);
+  }
+
   getAll(): Observable<Reminder[]> {
     return this.http
       .get<Reminder[]>(this.backend.remindersSortURL());
   }
 
   create(reminder: Reminder) {
+    ReminderService.convertTimestampsToLocalTZ(reminder);
+
     return this.http
       .post<Reminder>(this.backend.remindersURL(), reminder);
   }
@@ -42,6 +50,8 @@ export class ReminderService {
   }
 
   update(id: number, reminder: Reminder) {
+    ReminderService.convertTimestampsToLocalTZ(reminder);
+
     const rem = {...reminder};
     delete rem.id; // Always ensure I strip away the id field
     return this.http
