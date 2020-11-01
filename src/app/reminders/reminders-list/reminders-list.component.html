@@ -18,6 +18,7 @@
       class="btn"
       (document:keydown.n)="gotoReminderAdd($event)"
       style="cursor:pointer"
+      data-cy="add-reminder"
       [queryParams]="{selectedRow: selectedIdx+1}"
       routerLink="/reminders/add">Ajouter un rappel</a>
   </div>

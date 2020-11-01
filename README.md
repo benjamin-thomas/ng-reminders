@@ -36,6 +36,26 @@ cd ./api/postgrest/
 
 ---
 
+## Running tests
+
+### With a visible browser
+```
+ng test
+cypress open
+```
+
+### Headles
+```
+ng test --browsers ChromeHeadless
+cypress run
+```
+
+### Run all prior to commit
+
+ng test --browsers ChromeHeadless --watch=false && cypress run
+
+---
+
 ## Cypress setup
 
 [Source](https://dev.to/angular/ci-ready-e2e-tests-for-angular-with-cypress-and-typescript-in-under-60-minutes-4f30)

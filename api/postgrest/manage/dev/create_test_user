@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+
+# Cypress test runner does not work well with `httpie`, use `bat` instead
+
+# http POST http://localhost:4444/todos "Authorization:Bearer $TOKEN" task="learn how to auth"
+
+TOKEN_FILEPATH='/tmp/test-user.token.json'
+EMAIL=testuser@example.com
+PASSWORD=123
+
+function log() {
+  echo -e "--> \033[1;33m""$1""\033[1;m"
+}
+
+function url() {
+  echo 'http://localhost:4444'"$1"
+}
+
+function singleResourceHeader() {
+  echo 'Accept:application/vnd.pgrst.object+json'
+}
+
+function authHeader() {
+  echo "Authorization:Bearer $(jq -r '.token' /tmp/test-user.token.json)"
+}
+
+function createUser() {
+  log 'Creating user (idempotent)'
+
+  bat -f POST "$(url '/rpc/signup')" \
+    email=$EMAIL pass=$PASSWORD
+}
+
+function loginUser() {
+  log 'Login in user'
+
+  bat -f POST "$(url '/rpc/login')" \
+    email=$EMAIL pass=$PASSWORD "$(singleResourceHeader)" \
+    > $TOKEN_FILEPATH
+}
+
+function deletePreviousReminders() {
+  bat -f DELETE "$(url '/reminders')" "$(authHeader)"
+}
+
+createUser
+deletePreviousReminders
+loginUser
