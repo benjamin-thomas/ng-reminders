@@ -4,7 +4,9 @@
       <h1>{{ title }}</h1>
 
       <label class="align-left" for="due">Du</label>
-      <input type="datetime-local" id="due" formControlName="due">
+      <input type="datetime-local"
+             data-cy="due"
+             id="due" formControlName="due">
 
       <label class="align-left" for="content">Objet</label>
 

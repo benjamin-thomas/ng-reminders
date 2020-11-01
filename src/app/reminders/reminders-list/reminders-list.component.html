@@ -1,11 +1,12 @@
 <div id="container-wide">
   <div
     *ngIf="doneCount() > 0"
-    style="margin-left: 10px; ;margin-bottom: 30px;float:right;">
+    style="margin-left: 10px;margin-bottom: 30px;float:right;">
     <a
       class="btn"
       style="cursor:pointer"
-      (click)="deleteDone()"
+      data-cy="delete-all-done"
+      (click)="deleteAllDone()"
       [ngPlural]="doneCount()"
     >
       <ng-template ngPluralCase="1">Effacer le rappel terminé</ng-template>
@@ -45,10 +46,12 @@
       (click)="selectedChange.next(idx)"
     >
       <td>{{r.content}}</td>
-      <td>{{r.due | date:'short'}}</td>
+      <td data-cy="due">{{r.due | date:'short'}}</td>
       <td>
         <label>
-          <input type="checkbox" [(ngModel)]="r.done" #doneCbx>
+          <input type="checkbox"
+                 data-cy="check-done"
+                 [(ngModel)]="r.done" #doneCbx>
         </label>
       </td>
 

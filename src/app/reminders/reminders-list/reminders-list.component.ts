@@ -108,7 +108,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown.d')
   @HostListener('document:keydown.delete')
-  deleteDone() {
+  deleteAllDone() {
     this.reminderService
       .deleteMany(this.doneIds())
       .subscribe(() => {
