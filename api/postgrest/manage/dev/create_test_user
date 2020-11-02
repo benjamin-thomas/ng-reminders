@@ -46,5 +46,5 @@ function deletePreviousReminders() {
 }
 
 createUser
-deletePreviousReminders
 loginUser
+deletePreviousReminders
