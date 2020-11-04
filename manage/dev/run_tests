@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo -e '\033[1;33mUse: `cypress open` to run integration tests\033[1;m'
+
+set -x
+exec ng test --browsers ChromeHeadless --reporters mocha

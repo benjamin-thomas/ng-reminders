@@ -3,6 +3,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {SignupComponent} from './signup.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {AuthService} from '../../services/auth.service';
+import {CredentialsFormComponent} from '../credentials-form/credentials-form.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 class FakeAuthService {
   signup(email: string, password: string): void {
@@ -16,8 +18,8 @@ describe('SignupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [SignupComponent],
+      imports: [HttpClientTestingModule, ReactiveFormsModule],
+      declarations: [SignupComponent, CredentialsFormComponent],
       providers: [
         AuthService, {provide: AuthService, useClass: FakeAuthService}
       ]
