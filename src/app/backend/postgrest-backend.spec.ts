@@ -2,7 +2,7 @@ import {PostgrestBackend} from './postgrest-backend';
 
 const HOST = 'http://localhost:3333';
 
-fdescribe('PostgrestBackend', () => {
+describe('PostgrestBackend', () => {
   let b: PostgrestBackend;
 
   beforeEach(() => {

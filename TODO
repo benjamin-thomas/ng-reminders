@@ -9,3 +9,13 @@
 
 ## For date pipes fr param
 https://angular.io/guide/i18n
+
+---
+
+## Test the routing module
+
+https://codecraft.tv/courses/angular/unit-testing/routing/
+
+src/app/_bootstrap/routing/app-routing.module.ts
+
+---

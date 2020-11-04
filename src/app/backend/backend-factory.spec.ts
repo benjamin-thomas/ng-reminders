@@ -1,7 +1,7 @@
 import {BackendFactory} from './backend-factory';
 import {PostgrestBackend} from './postgrest-backend';
 
-fdescribe('BackendFactory', () => {
+describe('BackendFactory', () => {
 
   it('should create an instance', () => {
     expect(new BackendFactory()).toBeTruthy();
