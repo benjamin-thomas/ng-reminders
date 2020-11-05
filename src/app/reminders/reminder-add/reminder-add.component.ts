@@ -35,8 +35,7 @@ export class ReminderAddComponent implements OnInit {
   onValidSubmit() {
     this.reminderService
       .create(this.form.value)
-      .subscribe(data => {
-        console.log('Ok (null is returned here):', data);
+      .subscribe(() => {
         this.router.navigate(['reminders', 'list'], {
           queryParams: {
             selectedRow: this.selectedRow

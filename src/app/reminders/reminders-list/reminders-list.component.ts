@@ -154,7 +154,10 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   private fetchReminders() {
     this.reminderService.getAll()
       .subscribe(data => {
-        this.reminders = data;
+        this.reminders = data.map(d => {
+          d.due = new Date(d.due + 'Z'); // convert UTC to local TZ
+          return d;
+        });
         if (this.selectedIdx >= this.reminders.length) {
           // Ensure highlighted row is always logical, especially after delete
           this.selectedChange.next(this.reminders.length - 1);

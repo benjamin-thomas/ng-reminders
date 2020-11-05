@@ -26,9 +26,9 @@ export class ReminderService {
     });
   }
 
-  private static convertTimestampsToLocalTZ(reminder: Reminder) {
-    // Angular forms return text only data, this brings back the TZ before sending to the API server
-    reminder.due = new Date(reminder.due);
+  private static convertTimestampsToUTC(reminder: Reminder) {
+    // Angular forms return text only data, the API server requires a date in UTC
+    reminder.due = new Date(new Date(reminder.due).toISOString());
   }
 
   getAll(): Observable<Reminder[]> {
@@ -37,7 +37,9 @@ export class ReminderService {
   }
 
   create(reminder: Reminder) {
-    ReminderService.convertTimestampsToLocalTZ(reminder);
+    console.log('BEFORE:', reminder);
+    ReminderService.convertTimestampsToUTC(reminder);
+    console.log('AFTER:', reminder);
 
     return this.http
       .post<Reminder>(this.backend.remindersURL(), reminder);
@@ -49,7 +51,7 @@ export class ReminderService {
   }
 
   update(id: number, reminder: Reminder) {
-    ReminderService.convertTimestampsToLocalTZ(reminder);
+    ReminderService.convertTimestampsToUTC(reminder);
 
     const rem = {...reminder};
     delete rem.id; // Always ensure I strip away the id field

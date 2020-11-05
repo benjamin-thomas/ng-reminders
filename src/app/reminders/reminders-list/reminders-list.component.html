@@ -43,7 +43,11 @@
       (click)="selectedChange.next(idx)"
     >
       <td>{{r.content}}</td>
-      <td data-cy="due">{{r.due | date:'short'}}</td>
+      <td
+        [title]="r.due | date:'medium'"
+        data-cy="due"
+        [attr.data-cy-date]="r.due.toISOString()"
+      >{{r.due | date:"E d MMM yy, H'h'"}}</td>
       <td>
         <label>
           <input type="checkbox"

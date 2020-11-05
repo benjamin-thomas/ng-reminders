@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 
 import {AppComponent} from './_bootstrap/app.component';
 import {LoginComponent} from './credentials/components/login/login.component';
@@ -15,9 +15,10 @@ import {ReminderEditComponent} from './reminders/reminder-edit/reminder-edit.com
 import {AuthInterceptor} from './credentials/interceptors/auth.interceptor';
 import {NavBarComponent} from './nav-bar/nav-bar.component';
 import {ExpandMenuDirective} from './nav-bar/expand-menu.directive';
-import { LogoutComponent } from './credentials/components/logout/logout.component';
-import { BackendSelectComponent } from './backend/backend-select/backend-select.component';
-import { BackendStatusComponent } from './backend/backend-status/backend-status.component';
+import {LogoutComponent} from './credentials/components/logout/logout.component';
+import {BackendSelectComponent} from './backend/backend-select/backend-select.component';
+import {BackendStatusComponent} from './backend/backend-status/backend-status.component';
+import '@angular/common/locales/global/fr';
 
 @NgModule({
   declarations: [
@@ -35,20 +36,22 @@ import { BackendStatusComponent } from './backend/backend-status/backend-status.
     BackendSelectComponent,
     BackendStatusComponent,
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        AppRoutingModule,
-        FormsModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+    FormsModule
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    {provide: LOCALE_ID, useValue: 'fr'}
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

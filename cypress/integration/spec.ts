@@ -55,10 +55,10 @@ describe('Authentication', () => {
     cy.get('tbody tr').and('have.length', 1);
 
     cy.get('[data-cy="due"]').should(td => {
-      const text = td.text();
-      const ts = Cypress.moment(text);
-      expect(ts.format(DATETIME_LOCAL))
-        .to.equal(tomorrow.format(DATETIME_LOCAL));
+      const dateTxt = td.data().cyDate;
+      // const ts = Cypress.moment(text);
+      expect(dateTxt)
+        .to.equal(tomorrow.seconds(0).milliseconds(0).toISOString());
     });
   });
 
