@@ -25,11 +25,9 @@ export class AuthInterceptor implements HttpInterceptor {
       }
     });
     if (exclude) {
-      console.log('Excluding auth for:', exclude);
       return next.handle(request);
     }
 
-    console.log('Setting bearer auth for:', request.url);
     return next.handle(request.clone({
       setHeaders: {
         Authorization: `Bearer ${this.token}`

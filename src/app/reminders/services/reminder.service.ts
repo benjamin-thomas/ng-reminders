@@ -15,8 +15,7 @@ export class ReminderService {
   constructor(private http: HttpClient,
               private backendSelectService: BackendSelectService) {
     // No unsubscription as the service lives for the application's lifetime
-    this.backendSelectService.emitter.subscribe(([backend, name]) => {
-      console.log('Catching backend emit:', backend, '. Name:', name);
+    this.backendSelectService.emitter.subscribe(([backend]) => {
       this.backend = backend;
     });
   }

@@ -28,7 +28,6 @@ export class AuthService {
 
     // No unsubscription as the service lives for the application's lifetime
     this.backendSelectService.emitter.subscribe(([backend]) => {
-      console.log('[AUTH] Catching backend emit:', backend);
       this.backend = backend;
     });
   }
