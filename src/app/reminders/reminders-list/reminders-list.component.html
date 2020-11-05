@@ -37,9 +37,6 @@
     <tbody>
 
     <tr
-      (document:keydown.enter)="editSelectedReminder()"
-      (document:keydown.space)="selectedIdx === idx && doneCbx.click()"
-      (document:keydown.x)="selectedIdx === idx && doneCbx.click()"
       *ngFor="let r of reminders; let idx=index"
       [class.done]="r.done"
       [class.selected]="selectedIdx === idx"
@@ -51,7 +48,8 @@
         <label>
           <input type="checkbox"
                  data-cy="check-done"
-                 [(ngModel)]="r.done" #doneCbx>
+                 [checked]="r.done"
+                 (click)="toggleDone(r)">
         </label>
       </td>
 

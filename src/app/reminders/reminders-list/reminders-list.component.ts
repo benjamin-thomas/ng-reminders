@@ -82,14 +82,24 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   toggleDone(r: Reminder) {
-    const updated = {
+    // r.done = !r.done; // this would update the UI before server request
+    const requestForUpdate = {
       ...r,
       done: !r.done,
     };
 
-    this.reminderService.update(r.id, updated).subscribe(() => {
-      r = updated;
+    this.reminderService.update(r.id, requestForUpdate).subscribe(() => {
+      Object.assign(r, requestForUpdate); // `r = requestForUpdate` won't update the UI
     });
+  }
+
+  @HostListener('document:keydown.space', ['$event'])
+  @HostListener('document:keydown.x', ['$event'])
+  toggleDoneOnSelectedReminder($event: KeyboardEvent) {
+    $event.preventDefault(); // prevent scrolling with the space bar
+
+    const selected = this.reminders[this.selectedIdx];
+    this.toggleDone(selected);
   }
 
   doneIds(): number[] {
@@ -119,6 +129,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       });
   }
 
+  @HostListener('document:keydown.enter')
   editSelectedReminder() {
     const selected = this.reminders[this.selectedIdx];
     this.router.navigate(['reminders', 'edit', selected.id], {

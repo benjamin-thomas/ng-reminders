@@ -6,7 +6,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {Reminder} from '../reminder.model';
 import {of} from 'rxjs';
 import {ReminderService} from '../services/reminder.service';
-import {FormsModule} from '@angular/forms';
 
 const fakeReminders = [
   new Reminder(
@@ -31,8 +30,7 @@ describe('RemindersListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule,
-        FormsModule // ngModel warning
+        RouterTestingModule
       ],
       declarations: [RemindersListComponent],
       providers: [
