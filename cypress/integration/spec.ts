@@ -56,8 +56,7 @@ describe('Authentication', () => {
 
     cy.get('[data-cy="due"]').should(td => {
       const dateTxt = td.data().cyDate;
-      // const ts = Cypress.moment(text);
-      expect(dateTxt)
+      expect(new Date(dateTxt).toISOString())
         .to.equal(tomorrow.seconds(0).milliseconds(0).toISOString());
     });
   });
