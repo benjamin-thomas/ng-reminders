@@ -110,3 +110,8 @@ tbody tr:first-of-type td {
 tr.done input[type=checkbox] {
   opacity: .2;
 }
+
+// Weird focus appears on mouse + keyboard interaction
+tr input[type="checkbox"]:focus {
+  outline: none;
+}

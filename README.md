@@ -79,3 +79,10 @@ ng test --browsers ChromeHeadless --watch=false && cypress run
       "e2e:ci": "start-server-and-test start http://ng-reminders.test:4200 cy:run",
       ```
    - npm run e2e:ci
+
+---
+
+## Useful testing references here
+
+https://codecraft.tv/courses/angular/unit-testing/asynchronous/
+https://angular.io/guide/testing-services
