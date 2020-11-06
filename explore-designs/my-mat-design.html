@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"/>
+  <title>Material design style input</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/my-mat-design.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <label>
+    Name
+    <input type="text" autocomplete="off">
+  </label>
+
+</div>
+
+<script>
+  // If label wasn't the parent, I could use a input:valid selector
+  document.querySelectorAll('label > input').forEach((input) => {
+    input.addEventListener('change', () => {
+      const label = input.parentElement; // label is the CSS parent
+      const dirtyClass = 'has-dirty-input';
+      if (input.value) {
+        label.classList.add(dirtyClass);
+      } else {
+        label.classList.remove(dirtyClass);
+      }
+    });
+  })
+</script>
+
+</body>
+
+</html>

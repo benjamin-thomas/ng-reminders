@@ -1,0 +1,67 @@
+$text-color: #DDD;
+
+::selection {
+  background: #f75990;
+}
+
+body {
+  margin: 0;
+  background: #333;
+  color: $text-color;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+// Dealing with rems is a pain.
+// Since I have to increase the label min-height below by 1px above the 2px input border-bottom.
+// If I use rems, I then seem to deal with sub pixel units and can't get things to align properly.
+$font-size: 30px;
+label, input {
+  font-size: $font-size;
+  font-family: 'Poppins', sans-serif;
+  padding: 0;
+  transition: all .2s ease;
+}
+
+label {
+  // Label must control the width
+  width: 20rem;
+
+  // Prevents the font resizing from moving the input since this is a parent container
+  // Also, extra space is required for border, or outline, or margin, or padding (not sure yet)
+  min-height: calc(#{$font-size} + 3px); // 1px above the input's border-bottom height
+
+  position: relative;
+}
+
+$color: #11998e;
+input {
+  outline: none;
+  border: none;
+  border-bottom: 2px solid $color;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  background: transparent;
+  color: $text-color; // does not inherit from body
+}
+
+label:focus-within, label.has-dirty-input {
+  $push-down: 25px;
+  $transition-speed: .25s;
+
+  transition: all $transition-speed ease;
+  transform: translateY(-$push-down);
+  color: $color;
+  font-size: 20px;
+
+  input {
+    transition: all $transition-speed ease;
+    transform: translateY($push-down);
+  }
+}
