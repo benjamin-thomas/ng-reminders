@@ -1,0 +1,62 @@
+$main-color: #333;
+
+body {
+  background: $main-color;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+
+  // Centers the "centered" div (which is a container)
+  display: flex;
+  justify-content: center; // centers horizontally
+  align-items: stretch; // stretches the "centered" div to the body's height (100vh)
+}
+
+.centered {
+  display: flex;
+  align-items: center; // centers the "group" child vertically
+}
+
+.group {
+  position: relative;
+}
+
+label {
+  position: absolute;
+  top: 0;
+  left: 0; // ME
+  color: rgba(white, .5);
+  font-size: 40px;
+  cursor: text;
+  transition: .25s ease;
+  height: 50px;
+}
+
+input {
+  outline: none;
+  color: white;
+  font-size: 30px;
+  transition: .3s ease;
+  border-bottom: 2px solid rgba(white, .5);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+
+  &:focus, &:valid { // :valid will make the label stick to its final position
+    border-width: 3px;
+    border-image: linear-gradient(to right, blue, green);
+    border-image-slice: 1;
+
+    + label { // selects the adjacent label
+      color: dodgerblue;
+      font-size: 20px; // from 50px
+      top: -25px;
+    }
+  }
+
+  height: 50px;
+  width: 300px;
+  background: transparent;
+}

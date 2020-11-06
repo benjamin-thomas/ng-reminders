@@ -48,3 +48,5 @@ Thumbs.db
 # Cypress
 /cypress/videos/
 /cypress/screenshots/
+
+/explore-designs/css/
