@@ -1,0 +1,66 @@
+$text-color: #DDD;
+$color: #11998e;
+
+::selection {
+  background: #f75990;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: $text-color;
+  background: #333;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .mat-input {
+    @media (max-width: 768px) {
+      width: 300px; // only for the demo
+    }
+  }
+}
+
+.mat-input {
+  position: relative;
+
+  input, label {
+    line-height: 40px;
+    font-size: 30px;
+    padding: 5px;
+  }
+
+  input {
+    color: $text-color; // does not inherit from body
+    background: transparent;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid $color;
+  }
+
+  label {
+    position: absolute;
+    left: 0;
+    top: 0; // for the transition effect
+    transition: all .25s ease;
+    cursor: text;
+  }
+
+  input:focus, input:valid {
+    transition: all .25s ease;
+    border-bottom: 2px solid dodgerblue;
+
+    + label {
+      transition: all .25s ease;
+      color: dodgerblue;
+      top: -40px;
+      font-size: 20px;
+      cursor: default;
+    }
+  }
+
+}
