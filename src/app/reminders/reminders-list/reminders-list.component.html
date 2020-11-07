@@ -28,14 +28,15 @@
     <input id="search" type="text"
            autocomplete="off"
            (keydown.tab)="restoreSelectedRow()"
-           (focus)="this.editingSearch = true ; unselectRow() // do not use &&"
-           (blur)="this.editingSearch = false ; restoreRemindersOnEmpty(searchTerm.value)"
+           (keydown.escape)="searchTerm.value = '' ; searchTerm.blur() ; restoreSelectedRow()"
+           (focus)="this.editingSearch = true ; searchLabel.innerHTML = 'Recherche (appuyez sur entrée)'; unselectRow() // do not use &&"
+           (blur)="this.editingSearch = false ; searchLabel.innerHTML = 'Rechercher' ; restoreRemindersOnEmpty(searchTerm.value)"
            [class.editing]="this.editingSearch"
            [class.has-content]="searchTerm.value"
            (keydown.enter)="doSearch(searchTerm.value)"
-           autoSizeInput [minWidth]="200"
+           autoSizeInput [minWidth]="250"
            #searchTerm>
-    <label for="search">Search</label>
+    <label for="search" #searchLabel>Rechercher</label>
   </div>
 
   <table>
