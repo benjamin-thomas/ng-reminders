@@ -138,8 +138,16 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     this.reminderService
       .deleteMany(this.doneIds())
       .subscribe(() => {
-        console.log('Delete many success');
-        this.fetchReminders();
+
+        const maybeRedoSearch = () => {
+          const term = this.searchTerm.nativeElement.value;
+          if (term) {
+            this.doSearch(term); // then redo a search
+          }
+        };
+
+        this.fetchReminders(maybeRedoSearch); // refresh from the server
+
       }, (error: HttpErrorResponse) => {
         console.log('ERROR', error.error);
       });
@@ -208,7 +216,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     this.selectedChange.next(this.previousSelectedIdx);
   }
 
-  private fetchReminders() {
+  restoreRemindersOnEmpty(value: string) {
+    if (!value && this.hasFilteredSet()) {
+      this.reminders = this.origReminders;
+    }
+  }
+
+  private fetchReminders(doAfterFetch?: () => void) {
     this.reminderService.getAll()
       .subscribe(data => {
         this.reminders = data;
@@ -217,16 +231,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
           // Ensure highlighted row is always logical, especially after delete
           this.selectedChange.next(this.reminders.length - 1);
         }
+        if (doAfterFetch) {
+          doAfterFetch();
+        }
       }, (err: HttpErrorResponse) => {
         console.log(err.error);
         alert('Something went wrong!');
       });
-  }
-
-  restoreRemindersOnEmpty(value: string) {
-    if (!value && this.hasFilteredSet()) {
-      this.reminders = this.origReminders;
-    }
   }
 
   private hasFilteredSet() {
