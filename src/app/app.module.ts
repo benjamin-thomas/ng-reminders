@@ -19,6 +19,7 @@ import {LogoutComponent} from './credentials/components/logout/logout.component'
 import {BackendSelectComponent} from './backend/backend-select/backend-select.component';
 import {BackendStatusComponent} from './backend/backend-status/backend-status.component';
 import '@angular/common/locales/global/fr';
+import {AutoSizeInputModule} from 'ngx-autosize-input';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import '@angular/common/locales/global/fr';
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    AutoSizeInputModule,
   ],
   providers: [
     {

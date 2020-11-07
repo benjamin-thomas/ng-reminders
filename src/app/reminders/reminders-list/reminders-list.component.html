@@ -24,15 +24,18 @@
       routerLink="/reminders/add">Ajouter un rappel</a>
   </div>
 
-  <div>
-    <input
-      style="
-
-      margin-left: 10px;
-      margin-bottom: 30px;
-      border:1px solid red;
-"
-      type="text" placeholder="Search...">
+  <div class="bt-mat-input">
+    <input id="search" type="text"
+           autocomplete="off"
+           (keydown.tab)="restoreSelectedRow()"
+           (focus)="this.editingSearch = true ; unselectRow() // do not use &&"
+           (blur)="this.editingSearch = false"
+           [class.editing]="this.editingSearch"
+           [class.has-content]="searchTerm.value"
+           (keydown.enter)="doSearch(searchTerm.value)"
+           autoSizeInput [minWidth]="200"
+           #searchTerm>
+    <label for="search">Search</label>
   </div>
 
   <table>

@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Reminder} from '../reminder.model';
 import {ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -15,7 +15,10 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   reminders: Reminder[];
   selectedChange = new BehaviorSubject<number>(0);
   selectedIdx: number;
+  editingSearch = false;
+  @ViewChild('searchTerm') searchTerm: ElementRef;
   private selectChangeSub: Subscription;
+  private previousSelectedIdx: number;
 
   constructor(private reminderService: ReminderService,
               private route: ActivatedRoute,
@@ -43,7 +46,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       this.selectedIdx = id;
 
       // Don't update URL for first row
-      if (this.selectedIdx === 0) {
+      if (this.selectedIdx === 0 || this.selectedIdx === null) {
         this.router.navigate([]);
         return;
       }
@@ -60,6 +63,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.arrowDown', ['$event'])
   @HostListener('document:keydown.j')
   selectRowDown($event: KeyboardEvent) {
+    if (this.editingSearch) {
+      return;
+    }
     if ($event) {
       $event.preventDefault();
     }
@@ -72,6 +78,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.arrowUp', ['$event'])
   @HostListener('document:keydown.k')
   selectRowUp($event: KeyboardEvent) {
+    if (this.editingSearch) {
+      return;
+    }
     if ($event) {
       $event.preventDefault();
     }
@@ -96,6 +105,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.space', ['$event'])
   @HostListener('document:keydown.x', ['$event'])
   toggleDoneOnSelectedReminder($event: KeyboardEvent) {
+    if (this.editingSearch) {
+      return;
+    }
     $event.preventDefault(); // prevent scrolling with the space bar
 
     const selected = this.reminders[this.selectedIdx];
@@ -119,6 +131,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.d')
   @HostListener('document:keydown.delete')
   deleteAllDone() {
+    if (this.editingSearch) {
+      return;
+    }
     this.reminderService
       .deleteMany(this.doneIds())
       .subscribe(() => {
@@ -131,6 +146,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   @HostListener('document:keydown.enter')
   editSelectedReminder() {
+    if (this.editingSearch) {
+      return;
+    }
     const selected = this.reminders[this.selectedIdx];
     this.router.navigate(['reminders', 'edit', selected.id], {
       queryParams: {
@@ -140,6 +158,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   gotoReminderAdd($event: KeyboardEvent) {
+    if (this.editingSearch) {
+      return;
+    }
     // Prevent the pressed key to populate the form on the next page
     // Another solution would be to use the keyup event, but I don't like its delay
     $event.preventDefault();
@@ -149,6 +170,32 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         selectedRow: this.selectedIdx + 1
       }
     });
+  }
+
+  doSearch(value: string) {
+    console.log('Will search for:', value);
+  }
+
+  @HostListener('document:keydown.s', ['$event'])
+  @HostListener('document:keydown./', ['$event'])
+  focusSearch($event: KeyboardEvent) {
+    if (this.editingSearch) { // Actually typing one of the trigger keys
+      return;
+    }
+    $event.preventDefault(); // do not fill input with the shortcut trigger key
+    const {nativeElement} = this.searchTerm;
+    nativeElement.focus();
+    nativeElement.select();
+  }
+
+  unselectRow() {
+    this.previousSelectedIdx = this.selectedIdx;
+    this.selectedChange.next(null); // remove row highlighting + URL reference
+    return;
+  }
+
+  restoreSelectedRow() {
+    this.selectedChange.next(this.previousSelectedIdx);
   }
 
   private fetchReminders() {

@@ -115,3 +115,46 @@ tr.done input[type=checkbox] {
 tr input[type="checkbox"]:focus {
   outline: none;
 }
+
+.bt-mat-input {
+  position: relative;
+
+  input, label {
+    line-height: 25px;
+    font-size: 18px;
+    padding: 5px;
+  }
+
+  input {
+    color: $text-color; // does not inherit from body
+    outline: none;
+    border: none;
+    border-bottom: 2px solid $btn-text-color;
+  }
+
+  // I cannot animate the width change for now.
+  // I'll probably have to write a custom directive for that I think
+  $transition: all .25s ease, width 0s; // duration unit is mandatory
+  label {
+    position: absolute;
+    left: 0;
+    top: 0; // for the transition effect
+    transition: $transition;
+    cursor: text;
+    color: #666;
+  }
+
+  input:focus, input.has-content {
+    transition: $transition;
+    border-bottom: 2px solid $btn-bg-color;
+
+    + label {
+      transition: $transition;
+      color: $btn-bg-color;
+      top: -30px;
+      font-size: 15px;
+      cursor: default;
+    }
+  }
+
+}
