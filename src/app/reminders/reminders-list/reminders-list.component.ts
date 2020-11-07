@@ -19,6 +19,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @ViewChild('searchTerm') searchTerm: ElementRef;
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
+  private origReminders: Reminder[];
 
   constructor(private reminderService: ReminderService,
               private route: ActivatedRoute,
@@ -173,7 +174,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   doSearch(value: string) {
-    console.log('Will search for:', value);
+    this.reminders = this.origReminders.filter((r) => {
+      return r.content.includes(value);
+    });
   }
 
   @HostListener('document:keydown.s', ['$event'])
@@ -194,7 +197,14 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     return;
   }
 
+  // triggered from hitting the tab key from the search input
   restoreSelectedRow() {
+    if (this.hasFilteredSet()) {
+      // Do not attempt to restore the previously highlighted row after a search
+      // Instead, highlight the first row
+      this.selectedChange.next(0);
+      return;
+    }
     this.selectedChange.next(this.previousSelectedIdx);
   }
 
@@ -202,6 +212,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     this.reminderService.getAll()
       .subscribe(data => {
         this.reminders = data;
+        this.origReminders = data;
         if (this.selectedIdx >= this.reminders.length) {
           // Ensure highlighted row is always logical, especially after delete
           this.selectedChange.next(this.reminders.length - 1);
@@ -210,5 +221,15 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         console.log(err.error);
         alert('Something went wrong!');
       });
+  }
+
+  restoreRemindersOnEmpty(value: string) {
+    if (!value && this.hasFilteredSet()) {
+      this.reminders = this.origReminders;
+    }
+  }
+
+  private hasFilteredSet() {
+    return this.reminders.length !== this.origReminders.length;
   }
 }

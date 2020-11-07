@@ -29,7 +29,7 @@
            autocomplete="off"
            (keydown.tab)="restoreSelectedRow()"
            (focus)="this.editingSearch = true ; unselectRow() // do not use &&"
-           (blur)="this.editingSearch = false"
+           (blur)="this.editingSearch = false ; restoreRemindersOnEmpty(searchTerm.value)"
            [class.editing]="this.editingSearch"
            [class.has-content]="searchTerm.value"
            (keydown.enter)="doSearch(searchTerm.value)"
