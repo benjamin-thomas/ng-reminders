@@ -1,28 +1,45 @@
+<button (click)="loadBogus()">Load bogus 100</button>
 <div id="container-wide">
-  <div
-    *ngIf="doneCount() > 0"
-    style="margin-left: 10px;margin-bottom: 30px;float:right;">
-    <a
-      class="btn"
-      style="cursor:pointer"
-      data-cy="delete-all-done"
-      (click)="deleteAllDone()"
-      [ngPlural]="doneCount()"
-    >
-      <ng-template ngPluralCase="1">Effacer le rappel terminé</ng-template>
-      <ng-template ngPluralCase="other">Effacer les {{ doneCount() }} rappels terminés</ng-template>
-    </a>
+
+  <div class="btn-group">
+
+
+    <div
+      *ngIf="doneCount() > 0">
+      <a
+        class="btn"
+        style="cursor:pointer"
+        data-cy="delete-all-done"
+        (click)="deleteAllDone()"
+        [ngPlural]="doneCount()"
+      >
+        <ng-template ngPluralCase="1">Effacer le rappel terminé</ng-template>
+        <ng-template ngPluralCase="other">Effacer les {{ doneCount() }} rappels terminés</ng-template>
+      </a>
+    </div>
+
+
+    <div>
+    <span
+      *ngIf="doneCount() > 0"
+      class="btn" (click)="selectAll(doneCount() !== reminders?.length)">
+      <span *ngIf="doneCount() === reminders?.length">Décocher tout</span>
+      <span *ngIf="doneCount() !== reminders?.length">Cocher tout</span>
+    </span>
+    </div>
+
+    <div>
+      <a
+        class="btn"
+        (document:keydown.n)="gotoReminderAdd($event)"
+        style="cursor:pointer"
+        data-cy="add-reminder"
+        [queryParams]="{selectedRow: selectedIdx+1}"
+        routerLink="/reminders/add">Ajouter un rappel</a>
+
+    </div>
   </div>
 
-  <div style="margin-bottom: 30px;float:right;">
-    <a
-      class="btn"
-      (document:keydown.n)="gotoReminderAdd($event)"
-      style="cursor:pointer"
-      data-cy="add-reminder"
-      [queryParams]="{selectedRow: selectedIdx+1}"
-      routerLink="/reminders/add">Ajouter un rappel</a>
-  </div>
 
   <div class="bt-mat-input">
     <input id="search" type="text"
@@ -42,6 +59,7 @@
   <table>
     <thead>
     <tr>
+      <th>N°</th>
       <th>Objet</th>
       <th>Du</th>
       <th>Fait ?</th>
@@ -57,6 +75,7 @@
       [class.selected]="selectedIdx === idx"
       (click)="selectedChange.next(idx)"
     >
+      <td>{{ idx + 1 }}</td>
       <td>{{r.content}}</td>
       <td
         [title]="r.due | date:'medium'"

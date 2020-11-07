@@ -3,7 +3,7 @@ import {Reminder} from '../reminder.model';
 import {ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject, range, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 
 @Component({
@@ -222,6 +222,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     }
   }
 
+  loadBogus() {
+    range(1, 100).subscribe((n) => {
+      const r = new Reminder(`bogus #${n}`, new Date());
+      this.reminderService.create(r).subscribe();
+    });
+  }
+
   private fetchReminders(doAfterFetch?: () => void) {
     this.reminderService.getAll()
       .subscribe(data => {
@@ -242,5 +249,12 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   private hasFilteredSet() {
     return this.reminders.length !== this.origReminders.length;
+  }
+
+  selectAll(bool: boolean) {
+    this.reminders.forEach((r) => {
+      r.done = bool;
+      this.reminderService.update(r.id, r).subscribe(); // persist
+    });
   }
 }
