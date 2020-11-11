@@ -229,6 +229,14 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     });
   }
 
+  selectAll(bool: boolean) {
+    this.reminders.forEach((r) => {
+      this.reminderService.update(r.id, r).subscribe(() => {
+        r.done = bool; // update the UI after persist
+      });
+    });
+  }
+
   private fetchReminders(doAfterFetch?: () => void) {
     this.reminderService.getAll()
       .subscribe(data => {
@@ -249,12 +257,5 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   private hasFilteredSet() {
     return this.reminders.length !== this.origReminders.length;
-  }
-
-  selectAll(bool: boolean) {
-    this.reminders.forEach((r) => {
-      r.done = bool;
-      this.reminderService.update(r.id, r).subscribe(); // persist
-    });
   }
 }
