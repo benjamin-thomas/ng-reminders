@@ -1,0 +1,98 @@
+#!/usr/bin/env ruby
+
+# Turning off errors, annoying ones coming from awesome_print
+# -W0  NO Warnings     nil
+# -W1  Quiet           false
+# -W2  Verbose         true
+# noinspection RubyGlobalVariableNamingConvention
+$VERBOSE = nil
+
+# p(RUBY_VERSION: RUBY_VERSION)
+
+require 'faraday'
+require 'json'
+
+require 'awesome_print'
+
+# api/postgrest/db/migrations/20201018065436_login.sql
+USER     = 'user1@example.com'.freeze
+PASSWORD = 'yo'.freeze
+
+UNIQUE_RESOURCE_HEADER = {
+  Accept: 'application/vnd.pgrst.object+json', # use Hash#merge
+}.freeze
+
+def url(path)
+  # See: ../../src/environments/environment.ts
+  "http://localhost:4444#{path}"
+end
+
+resp  = Faraday.post(url('/rpc/login'), {email: USER, pass: PASSWORD}, UNIQUE_RESOURCE_HEADER)
+token = JSON(resp.body).fetch('token')
+
+# params = { id: 'eq.3546'}
+params = {}
+#  Authorization: `Bearer ${this.token}`
+headers = {
+  Authorization: "Bearer #{token}",
+  # 'Range-Unit':  'items',
+  # Range:         '0-1', # 0-1 means 2 items will be returned
+  'Prefer': 'count=exact',
+}
+
+=begin
+For consistency's sake all these endpoints return a JSON array, /stories,
+/stories?genre=eq.mystery, /stories?id=eq.1. They are all filtering a bigger
+array. However you might want the last one to return a single JSON object,
+not an array with one element. To request a singular response send the header
+Prefer: plurality=singular
+
+---
+
+GET /people?order=age.nullsfirst
+GET /people?order=age.desc.nullslast
+
+---
+
+The client can set the limit and offset of a request by setting the Range header.
+Translate the limit and offset into a range.
+To request the first five elements, include these request headers:
+
+Range-Unit: items
+Range: 0-4
+
+The other way to request a limit or offset is with query parameters. For example
+GET /people?limit=15&offset=30 HTTP/1.1
+
+---
+
+GET /films?select=*,roles(*)&roles.or=(character.eq.Gummo,character.eq.Zeppo) HTTP/1.1
+or=(id.eq.3549,done.eq.false)
+
+or=(id.eq.3549,content.eq.bogus%20%2398) --> or=(id.eq.3549,content.eq.bogus #98)
+
+---
+
+/reminders?limit=2&order=id.asc           --> 0-1/101
+/reminders?limit=2&offset=2&order=id.asc  --> 2-3/101
+/reminders?limit=2&offset=4&order=id.asc  --> 4-5/101
+
+=end
+
+# /rpc/signup
+# /rpc/login
+# `/reminders?id=eq.${id}`
+# `/reminders?id=eq.${ids[0]}`
+# `/reminders?or=(${strIds})`
+# ?order=due.asc,id.desc
+search_url = url("/reminders?#{ARGV.join('&')}")
+# rubocop:disable Lint/UriEscapeUnescape
+search_url_encoded = URI.encode(search_url)
+# rubocop:enable Lint/UriEscapeUnescape
+
+puts(search_url)
+puts(search_url_encoded)
+resp = Faraday.get(search_url_encoded, params, headers)
+# require 'pry';binding.pry
+ap(JSON(resp.body))
+ap(resp.headers)
