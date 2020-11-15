@@ -22,6 +22,10 @@ UNIQUE_RESOURCE_HEADER = {
   Accept: 'application/vnd.pgrst.object+json', # use Hash#merge
 }.freeze
 
+OPEN_API_JSON_HEADER = {
+  Accept: 'application/openapi+json', # use Hash#merge
+}.freeze
+
 def url(path)
   # See: ../../src/environments/environment.ts
   "http://localhost:4444#{path}"
@@ -38,7 +42,9 @@ headers = {
   # 'Range-Unit':  'items',
   # Range:         '0-1', # 0-1 means 2 items will be returned
   'Prefer': 'count=exact',
-}
+  # 'Prefer': 'count=planned', # fairly accurate and fast count
+  # 'Prefer': 'count=estimated', # a mix of exact+planned with definable threshold
+} # .merge(OPEN_API_JSON_HEADER)
 
 =begin
 For consistency's sake all these endpoints return a JSON array, /stories,
@@ -86,6 +92,7 @@ or=(id.eq.3549,content.eq.bogus%20%2398) --> or=(id.eq.3549,content.eq.bogus #98
 # `/reminders?or=(${strIds})`
 # ?order=due.asc,id.desc
 search_url = url("/reminders?#{ARGV.join('&')}")
+# search_url = url("/")
 # rubocop:disable Lint/UriEscapeUnescape
 search_url_encoded = URI.encode(search_url)
 # rubocop:enable Lint/UriEscapeUnescape
@@ -96,3 +103,4 @@ resp = Faraday.get(search_url_encoded, params, headers)
 # require 'pry';binding.pry
 ap(JSON(resp.body))
 ap(resp.headers)
+# ap(req_headers: resp.env.request_headers)

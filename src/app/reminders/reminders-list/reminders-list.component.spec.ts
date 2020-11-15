@@ -5,7 +5,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Reminder} from '../reminder.model';
 import {of} from 'rxjs';
-import {ReminderService} from '../services/reminder.service';
+import {PaginatedRemindersResponse, ReminderService} from '../services/reminder.service';
+import {AutoSizeInputModule} from 'ngx-autosize-input';
 
 const fakeReminders = [
   new Reminder(
@@ -16,9 +17,14 @@ const fakeReminders = [
     new Date()),
 ];
 
+const fakeReminderResponse: PaginatedRemindersResponse = {
+  items: fakeReminders,
+  total: fakeReminders.length
+};
+
 class FakeReminderService {
   getAll() {
-    return of(fakeReminders);
+    return of(fakeReminderResponse);
   }
 }
 
@@ -30,7 +36,8 @@ describe('RemindersListComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule
+        RouterTestingModule,
+        AutoSizeInputModule,
       ],
       declarations: [RemindersListComponent],
       providers: [

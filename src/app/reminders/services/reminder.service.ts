@@ -1,9 +1,16 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Reminder} from '../reminder.model';
 import {Observable} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
 import {Backend} from '../../backend/backend.model';
+import {map} from 'rxjs/operators';
+
+
+export interface PaginatedRemindersResponse {
+  items: Reminder[];
+  total: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -25,10 +32,39 @@ export class ReminderService {
       Accept: 'application/vnd.pgrst.object+json', // returns a single item, vs Array
     });
   }
+  getAll(limit: number, offset: number, searchContentLike?: string): Observable<PaginatedRemindersResponse> {
+    let url: string;
+    if (!searchContentLike) {
+      url = this.backend.remindersSortURL({limit, offset});
 
-  getAll(): Observable<Reminder[]> {
+    } else {
+      url = this.backend.remindersSortURL({limit, offset}, { contentLike: searchContentLike});
+    }
+
     return this.http
-      .get<Reminder[]>(this.backend.remindersSortURL());
+      .get<Reminder[]>(url, {
+        observe: 'response', // access response headers
+        headers: {Prefer: 'count=exact'} // get total (rather than `*`)
+      })
+      .pipe(
+        map((res: HttpResponse<Reminder[]>) => {
+          const contentRange = res.headers.get('content-range');
+          /*
+          contentRange: "0-101/*" --> without any specific count headers
+          "content-range" => "0-101/102", --> with header 'Prefer': 'count=exact'
+          "content-range" => "4-5/*", --> without header 'Prefer': 'count=exact'
+          "content-range" => "4-5/102"
+           */
+          const [currSlice, totalStr] = contentRange.split('/');
+          const total = Number(totalStr);
+          console.log({contentRange, currSlice, total});
+
+          return {
+            items: res.body,
+            total,
+          };
+        })
+      );
   }
 
   create(reminder: Reminder) {

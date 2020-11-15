@@ -3,7 +3,9 @@ interface BackendURLs {
   signupURL: () => string;
   reminderURL: (id: number) => string;
   remindersURL: (ids?: number[]) => string;
-  remindersSortURL: () => string;
+
+  remindersSortURL: (paginate?: { limit: number, offset: number },
+                     search?: { contentLike: string }) => string;
 }
 
 export abstract class Backend implements BackendURLs {
@@ -21,5 +23,6 @@ export abstract class Backend implements BackendURLs {
 
   abstract remindersURL(ids?: number[]): string;
 
-  abstract remindersSortURL(): string;
+  abstract remindersSortURL(paginate?: { limit: number, offset: number },
+                            search?: { contentLike: string }): string;
 }

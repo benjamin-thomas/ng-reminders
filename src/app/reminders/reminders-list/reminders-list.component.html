@@ -1,8 +1,9 @@
-<button (click)="loadBogus()">Load bogus 100</button>
+<button
+  *ngIf="isDevMode"
+  (click)="loadBogus()">Load bogus 100</button>
 <div id="container-wide">
 
   <div class="btn-group">
-
 
     <div
       *ngIf="doneCount() > 0">
@@ -44,6 +45,7 @@
   <div class="bt-mat-input">
     <input id="search" type="text"
            autocomplete="off"
+           class="add-table-left-margin-equiv"
            (keydown.tab)="restoreSelectedRow()"
            (keydown.escape)="searchTerm.value = '' ; searchTerm.blur() ; restoreSelectedRow()"
            (focus)="this.editingSearch = true ; searchLabel.innerHTML = 'Recherche (appuyez sur entrée)'; unselectRow() // do not use &&"
@@ -53,7 +55,7 @@
            (keydown.enter)="doSearch(searchTerm.value)"
            autoSizeInput [minWidth]="250"
            #searchTerm>
-    <label for="search" #searchLabel>Rechercher</label>
+    <label class="add-table-left-margin-equiv" for="search" #searchLabel>Rechercher</label>
   </div>
 
   <table>
@@ -95,4 +97,11 @@
 
     </tbody>
   </table>
+
+  <div
+    class="fake-link add-table-left-margin-equiv"
+    style="margin-top: 1rem;"
+    (click)="fetchMoreReminders(searchTerm.value)"
+    *ngIf="total > reminders?.length"
+  >Voir plus...</div>
 </div>

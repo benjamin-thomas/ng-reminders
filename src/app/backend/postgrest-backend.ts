@@ -42,7 +42,18 @@ export class PostgrestBackend extends Backend {
     return this.host + `/reminders?or=(${strIds})`;
   }
 
-  remindersSortURL() {
-    return this.remindersURL() + '?order=due.asc,id.desc';
+  remindersSortURL(paginate?: { limit: number; offset: number },
+                   search?: { contentLike: string }): string {
+    let url = this.remindersURL() + '?order=due.asc,id.desc';
+    if (paginate) {
+      url += `&limit=${paginate.limit}&offset=${paginate.offset}`;
+    }
+
+    if (search) {
+      url += `&content=ilike.${search.contentLike}`;
+    }
+
+    return url;
   }
+
 }

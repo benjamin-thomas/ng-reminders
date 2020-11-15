@@ -1,6 +1,6 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, isDevMode, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Reminder} from '../reminder.model';
-import {ReminderService} from '../services/reminder.service';
+import {PaginatedRemindersResponse, ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, range, Subscription} from 'rxjs';
@@ -17,9 +17,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   selectedIdx: number;
   editingSearch = false;
   @ViewChild('searchTerm') searchTerm: ElementRef;
+  private currOffset = -1;
+  total: number;
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
   private origReminders: Reminder[];
+  private fetchLimit = 10;
+  isDevMode = isDevMode();
 
   constructor(private reminderService: ReminderService,
               private route: ActivatedRoute,
@@ -146,6 +150,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
           }
         };
 
+        this.currOffset = -1;
         this.fetchReminders(maybeRedoSearch); // refresh from the server
 
       }, (error: HttpErrorResponse) => {
@@ -182,9 +187,8 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   doSearch(value: string) {
-    this.reminders = this.origReminders.filter((r) => {
-      return r.content.includes(value);
-    });
+    this.currOffset = -1; // reset offset before search
+    this.fetchReminders(null, value);
   }
 
   @HostListener('document:keydown.s', ['$event'])
@@ -237,9 +241,31 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private fetchReminders(doAfterFetch?: () => void) {
-    this.reminderService.getAll()
-      .subscribe(data => {
+  fetchMoreReminders(currSearchTerm: string) {
+    const previousReminders = this.reminders;
+    this.fetchReminders(() => {
+      const newReminders = this.reminders;
+      this.reminders = previousReminders;
+      this.reminders.push(...newReminders);
+    }, currSearchTerm);
+  }
+
+  private fetchReminders(doAfterFetch?: () => void, searchContentLike?: string) {
+    let searchContentLike2: string;
+    if (!searchContentLike) {
+      searchContentLike2 = null;
+    } else {
+      if (!searchContentLike.includes('*')) {
+        searchContentLike2 = `*${searchContentLike}*`;
+      } else {
+        searchContentLike2 = searchContentLike;
+      }
+    }
+    this.currOffset += 1;
+    this.reminderService.getAll(this.fetchLimit, this.currOffset, searchContentLike2)
+      .subscribe((resp: PaginatedRemindersResponse) => {
+        const data = resp.items;
+        this.total = resp.total;
         this.reminders = data;
         this.origReminders = data;
         if (this.selectedIdx >= this.reminders.length) {

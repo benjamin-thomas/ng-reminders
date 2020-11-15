@@ -41,6 +41,16 @@ h1, h2, h3, h4, h5, h6, th {
   outline: none;
 }
 
+.fake-link {
+  cursor: pointer;
+  color: $nav-bar-color;
+  font-weight: 600;
+  text-decoration: underline;
+
+  &:hover {
+    color: $nav-bar-hover-color;
+  }
+}
 
 #container-narrow, #container-wide {
   background: white;
@@ -67,8 +77,13 @@ table {
   width: 100%;
 }
 
+$cell-padding: .75rem;
 th, td {
-  padding: .75rem 1rem;
+  padding: $cell-padding 1rem;
+}
+
+.add-table-left-margin-equiv {
+  margin-left: $cell-padding;
 }
 
 td {
@@ -82,8 +97,9 @@ thead th {
 }
 
 tbody tr.selected.done {
-  color:#c0c0c0;
+  color: #c0c0c0;
 }
+
 tbody tr.selected {
   background: $table-hover-bg-color;
   color: $table-hover-text-color;
@@ -92,7 +108,7 @@ tbody tr.selected {
 }
 
 tbody tr.done {
-  color:#ccc;
+  color: #ccc;
   text-decoration: line-through;
 }
 
