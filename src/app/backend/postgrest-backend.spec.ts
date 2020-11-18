@@ -41,7 +41,8 @@ describe('PostgrestBackend', () => {
   });
 
   it('should handle sorting', () => {
-    expect(b.remindersSortURL()).toEqual(HOST + '/reminders?order=due.asc,id.desc');
+    expect(b.remindersSortURL(null, null, null, null))
+      .toEqual(HOST + '/reminders?order=due.asc,id.desc&limit=1&offset=0');
   });
 
 });

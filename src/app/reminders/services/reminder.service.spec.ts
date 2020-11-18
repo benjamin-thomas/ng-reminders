@@ -18,7 +18,7 @@ class FakeBackendSelectService {
     return [this.backend, 'Testing backend'];
   }
 
-  save() {
+  save() { // keep, mimics BackendSelectService
     throw new Error('NOOP');
   }
 
@@ -62,7 +62,7 @@ describe('ReminderService', () => {
       ],
       total: 1
     };
-    service2.getAll(1, 0).subscribe(
+    service2.getAll(1, 0, null, null).subscribe(
       paginatedReminders => expect(paginatedReminders.items).toEqual(
         mockResponse.items, 'should return the mocked reminders'
       ),
@@ -70,7 +70,7 @@ describe('ReminderService', () => {
     );
 
     const httpMock = TestBed.inject(HttpTestingController);
-    const req = httpMock.expectOne(backend.remindersSortURL({ limit: 1, offset: 0}));
+    const req = httpMock.expectOne(backend.remindersSortURL(1,  0, null, null));
     expect(req.request.method).toEqual('GET');
     // expect(req.request.body).toEqual(null); // this does not work
 

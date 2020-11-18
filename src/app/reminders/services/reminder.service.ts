@@ -32,14 +32,9 @@ export class ReminderService {
       Accept: 'application/vnd.pgrst.object+json', // returns a single item, vs Array
     });
   }
-  getAll(limit: number, offset: number, searchContentLike?: string): Observable<PaginatedRemindersResponse> {
-    let url: string;
-    if (!searchContentLike) {
-      url = this.backend.remindersSortURL({limit, offset});
 
-    } else {
-      url = this.backend.remindersSortURL({limit, offset}, { contentLike: searchContentLike});
-    }
+  getAll(limit: number, offset: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
+    const url = this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
 
     return this.http
       .get<Reminder[]>(url, {

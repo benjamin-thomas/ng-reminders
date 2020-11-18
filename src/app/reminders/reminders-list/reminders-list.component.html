@@ -1,6 +1,8 @@
 <button
   *ngIf="isDevMode"
-  (click)="loadBogus()">Load bogus 100</button>
+  (click)="loadBogus()">Load bogus 100
+</button>
+
 <div id="container-wide">
 
   <div class="btn-group">
@@ -9,7 +11,6 @@
       *ngIf="doneCount() > 0">
       <a
         class="btn"
-        style="cursor:pointer"
         data-cy="delete-all-done"
         (click)="deleteAllDone()"
         [ngPlural]="doneCount()"
@@ -18,7 +19,6 @@
         <ng-template ngPluralCase="other">Effacer les {{ doneCount() }} rappels terminés</ng-template>
       </a>
     </div>
-
 
     <div>
     <span
@@ -41,21 +41,36 @@
     </div>
   </div>
 
+  <div id="search-controls">
+    <div class="bt-mat-input add-table-left-margin-equiv">
+      <input id="search" type="text"
+             autocomplete="off"
+             [(ngModel)]="searchTerm"
+             (keydown.tab)="restoreSelectedRow()"
+             (keydown.escape)="searchTerm = '' ; searchTermInput.blur(); doSearch(); restoreSelectedRow()"
+             (focus)="this.editingSearch = true ; searchLabel.innerHTML = 'Recherche (appuyez sur entrée)'; unselectRow() // do not use &&"
+             (blur)="this.editingSearch = false ; searchLabel.innerHTML = 'Rechercher'"
+             [class.editing]="this.editingSearch"
+             [class.has-content]="searchTerm"
+             (keydown.enter)="doSearch()"
+             autoSizeInput [minWidth]="250"
+      #searchTermInput>
+      <label for="search" #searchLabel>Rechercher</label>
+    </div>
 
-  <div class="bt-mat-input">
-    <input id="search" type="text"
-           autocomplete="off"
-           class="add-table-left-margin-equiv"
-           (keydown.tab)="restoreSelectedRow()"
-           (keydown.escape)="searchTerm.value = '' ; searchTerm.blur() ; restoreSelectedRow()"
-           (focus)="this.editingSearch = true ; searchLabel.innerHTML = 'Recherche (appuyez sur entrée)'; unselectRow() // do not use &&"
-           (blur)="this.editingSearch = false ; searchLabel.innerHTML = 'Rechercher' ; restoreRemindersOnEmpty(searchTerm.value)"
-           [class.editing]="this.editingSearch"
-           [class.has-content]="searchTerm.value"
-           (keydown.enter)="doSearch(searchTerm.value)"
-           autoSizeInput [minWidth]="250"
-           #searchTerm>
-    <label class="add-table-left-margin-equiv" for="search" #searchLabel>Rechercher</label>
+    <label
+      data-cy="check-due"
+      class="search-control-item">
+      Rappels dus
+      <input
+        [(ngModel)]="isDue"
+        (ngModelChange)="reQuery()"
+        type="checkbox">
+    </label>
+
+    <span class="search-control-item" style="margin-left: auto;font-style: italic">
+      Total : {{ total }}
+    </span>
   </div>
 
   <table>
@@ -101,7 +116,8 @@
   <div
     class="fake-link add-table-left-margin-equiv"
     style="margin-top: 1rem;"
-    (click)="fetchMoreReminders(searchTerm.value)"
+    (click)="fetchMoreReminders()"
     *ngIf="total > reminders?.length"
-  >Voir plus...</div>
+  >Voir plus...
+  </div>
 </div>

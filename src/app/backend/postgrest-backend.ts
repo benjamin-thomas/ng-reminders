@@ -42,15 +42,30 @@ export class PostgrestBackend extends Backend {
     return this.host + `/reminders?or=(${strIds})`;
   }
 
-  remindersSortURL(paginate?: { limit: number; offset: number },
-                   search?: { contentLike: string }): string {
-    let url = this.remindersURL() + '?order=due.asc,id.desc';
-    if (paginate) {
-      url += `&limit=${paginate.limit}&offset=${paginate.offset}`;
+  remindersSortURL(limit: number,
+                   offset: number,
+                   contentLike: string,
+                   isDue: boolean): string {
+
+    // Handle bad params, this will do for now
+    if (limit === null) {
+      limit = 1;
+    }
+    if (offset === null) {
+      offset = 0;
     }
 
-    if (search) {
-      url += `&content=ilike.${search.contentLike}`;
+    let url = this.remindersURL()
+      + '?order=due.asc,id.desc'
+      + `&limit=${limit}&offset=${offset}`
+    ;
+
+    if (contentLike) {
+      url += `&content=ilike.${contentLike}`;
+    }
+
+    if (isDue === true) {
+      url += '&due=lt.now';
     }
 
     return url;

@@ -43,6 +43,10 @@ describe('Authentication', () => {
 
     createReminder('First reminder', tomorrow.format(DATETIME_LOCAL));
     createReminder('Second reminder');
+
+    cy.get('tbody tr').and('have.length', 0);
+
+    cy.get('[data-cy="check-due"]').click(); // checked -> unchecked
     cy.get('tbody tr').and('have.length', 2);
 
     const firstRow = 'tbody tr:nth-child(1)';

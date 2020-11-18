@@ -12,18 +12,21 @@ import {take} from 'rxjs/operators';
   styleUrls: ['./reminders-list.component.scss']
 })
 export class RemindersListComponent implements OnInit, OnDestroy {
+
   reminders: Reminder[];
   selectedChange = new BehaviorSubject<number>(0);
   selectedIdx: number;
   editingSearch = false;
-  @ViewChild('searchTerm') searchTerm: ElementRef;
-  private currOffset = -1;
+  searchTerm = '';
+  @ViewChild('searchTermInput') searchTermInput: ElementRef;
   total: number;
+  isDevMode = isDevMode();
+  // triggered from hitting the tab key from the search input
+  isDue = true;
+  private currOffset = 0;
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
-  private origReminders: Reminder[];
   private fetchLimit = 10;
-  isDevMode = isDevMode();
 
   constructor(private reminderService: ReminderService,
               private route: ActivatedRoute,
@@ -144,13 +147,11 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
 
         const maybeRedoSearch = () => {
-          const term = this.searchTerm.nativeElement.value;
-          if (term) {
-            this.doSearch(term); // then redo a search
+          if (this.searchTerm) {
+            this.doSearch(); // then redo a search
           }
         };
 
-        this.currOffset = -1;
         this.fetchReminders(maybeRedoSearch); // refresh from the server
 
       }, (error: HttpErrorResponse) => {
@@ -186,9 +187,9 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     });
   }
 
-  doSearch(value: string) {
-    this.currOffset = -1; // reset offset before search
-    this.fetchReminders(null, value);
+  doSearch() {
+    this.currOffset = 0;
+    this.reQuery();
   }
 
   @HostListener('document:keydown.s', ['$event'])
@@ -198,7 +199,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       return;
     }
     $event.preventDefault(); // do not fill input with the shortcut trigger key
-    const {nativeElement} = this.searchTerm;
+    const {nativeElement} = this.searchTermInput;
     nativeElement.focus();
     nativeElement.select();
   }
@@ -209,21 +210,14 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     return;
   }
 
-  // triggered from hitting the tab key from the search input
   restoreSelectedRow() {
-    if (this.hasFilteredSet()) {
+    if (this.searchTerm) {
       // Do not attempt to restore the previously highlighted row after a search
       // Instead, highlight the first row
       this.selectedChange.next(0);
       return;
     }
     this.selectedChange.next(this.previousSelectedIdx);
-  }
-
-  restoreRemindersOnEmpty(value: string) {
-    if (!value && this.hasFilteredSet()) {
-      this.reminders = this.origReminders;
-    }
   }
 
   loadBogus() {
@@ -241,33 +235,32 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     });
   }
 
-  fetchMoreReminders(currSearchTerm: string) {
+  fetchMoreReminders() {
     const previousReminders = this.reminders;
+    this.currOffset += this.fetchLimit;
     this.fetchReminders(() => {
       const newReminders = this.reminders;
       this.reminders = previousReminders;
       this.reminders.push(...newReminders);
-    }, currSearchTerm);
+    });
   }
 
-  private fetchReminders(doAfterFetch?: () => void, searchContentLike?: string) {
-    let searchContentLike2: string;
-    if (!searchContentLike) {
-      searchContentLike2 = null;
-    } else {
-      if (!searchContentLike.includes('*')) {
-        searchContentLike2 = `*${searchContentLike}*`;
-      } else {
-        searchContentLike2 = searchContentLike;
-      }
+  reQuery() {
+    console.log('Re-querying...', { isDue: this.isDue});
+    this.fetchReminders();
+  }
+
+  private fetchReminders(doAfterFetch?: () => void) {
+    let searchContentLike: string;
+    if (this.searchTerm && !this.searchTerm.includes('*')) {
+      searchContentLike = `*${this.searchTerm}*`;
     }
-    this.currOffset += 1;
-    this.reminderService.getAll(this.fetchLimit, this.currOffset, searchContentLike2)
+    this.reminderService.getAll(this.fetchLimit, this.currOffset, searchContentLike, this.isDue)
       .subscribe((resp: PaginatedRemindersResponse) => {
         const data = resp.items;
         this.total = resp.total;
         this.reminders = data;
-        this.origReminders = data;
+
         if (this.selectedIdx >= this.reminders.length) {
           // Ensure highlighted row is always logical, especially after delete
           this.selectedChange.next(this.reminders.length - 1);
@@ -281,7 +274,4 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       });
   }
 
-  private hasFilteredSet() {
-    return this.reminders.length !== this.origReminders.length;
-  }
 }

@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     awesome_print (1.8.0)
+    dotenv (2.7.6)
     faraday (1.1.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
@@ -13,6 +14,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
+  dotenv
   faraday
 
 BUNDLED WITH

@@ -1,8 +1,31 @@
 .btn-group {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2rem;
 
   .btn {
     margin-left: 10px;
+  }
+}
+
+#search-controls {
+  display: flex;
+}
+
+.search-control-item {
+  // See: styles.css (input, label) for .bt-mat-input
+  line-height: 25px;
+  font-size: 18px;
+  padding: 5px;
+  color: #666; // see .bt-mat-input animated color
+
+  // Other styles
+  margin-left: 2rem;
+
+  // See: styles.css
+  // I get the same problem if I press the space bar once
+  input[type="checkbox"]:focus {
+    outline: none;
   }
 }

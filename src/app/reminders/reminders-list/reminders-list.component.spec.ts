@@ -7,6 +7,7 @@ import {Reminder} from '../reminder.model';
 import {of} from 'rxjs';
 import {PaginatedRemindersResponse, ReminderService} from '../services/reminder.service';
 import {AutoSizeInputModule} from 'ngx-autosize-input';
+import {FormsModule} from '@angular/forms';
 
 const fakeReminders = [
   new Reminder(
@@ -38,6 +39,7 @@ describe('RemindersListComponent', () => {
         HttpClientTestingModule,
         RouterTestingModule,
         AutoSizeInputModule,
+        FormsModule,
       ],
       declarations: [RemindersListComponent],
       providers: [
