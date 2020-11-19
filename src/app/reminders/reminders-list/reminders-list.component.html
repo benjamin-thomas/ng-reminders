@@ -68,6 +68,15 @@
         type="checkbox">
     </label>
 
+    <label
+      class="search-control-item"
+      title="Repousser Depuis Maintenant">
+      RDM
+      <input
+        [(ngModel)]="pushBackFromNow"
+        type="checkbox">
+    </label>
+
     <span class="search-control-item" style="margin-left: auto;font-style: italic">
       Total : {{ total }}
     </span>
@@ -80,7 +89,6 @@
       <th>Objet</th>
       <th>Du</th>
       <th>Fait ?</th>
-      <th style="display: none">Links</th>
     </tr>
     </thead>
 
@@ -90,15 +98,27 @@
       *ngFor="let r of reminders; let idx=index"
       [class.done]="r.done"
       [class.selected]="selectedIdx === idx"
-      (click)="selectedChange.next(idx)"
+      (click)="emitSelectedChange(idx, $event)"
     >
       <td>{{ idx + 1 }}</td>
-      <td>{{r.content}}</td>
+      <td
+        (mouseenter)="pushBackOptions.style.visibility = 'visible'"
+        (mouseleave)="pushBackOptions.style.visibility = 'hidden'"
+      >
+        {{r.content}}
+
+        <span style="float:right;visibility: hidden" #pushBackOptions>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*10)">{{ pushBackFromNowChar() }}10m</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60)">{{ pushBackFromNowChar() }}1h</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60*4)">{{ pushBackFromNowChar() }}4h</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60*24)">{{ pushBackFromNowChar() }}24h</button>
+        </span>
+      </td>
       <td
         [title]="r.due | date:'medium'"
         data-cy="due"
         [attr.data-cy-date]="r.due"
-      >{{r.due | date:"E d MMM yy, H'h'"}}</td>
+      >{{r.due | date:"E d MMM yy, H'h'mm"}}</td>
       <td>
         <label>
           <input type="checkbox"

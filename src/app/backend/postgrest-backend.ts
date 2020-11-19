@@ -1,4 +1,5 @@
 import {Backend} from './backend.model';
+import * as moment from 'moment';
 
 const InvalidInputError = new Error('Invalid input!');
 
@@ -64,8 +65,9 @@ export class PostgrestBackend extends Backend {
       url += `&content=ilike.${contentLike}`;
     }
 
+    const now = moment().format('YYYY-MM-DDTHH:mm:ss');
     if (isDue === true) {
-      url += '&due=lt.now';
+      url += `&due=lt.${now}`; // lt.now works but dependent on server time so not really a great option
     }
 
     return url;

@@ -50,8 +50,9 @@ describe('Authentication', () => {
     cy.get('tbody tr').and('have.length', 2);
 
     const firstRow = 'tbody tr:nth-child(1)';
-    cy.get(firstRow).click()
-      .and('have.class', 'selected');
+    const firstRowTD2 = 'tbody tr:nth-child(1) > td:nth-child(2)';
+    cy.get(firstRowTD2).click();
+    cy.get(firstRow).and('have.class', 'selected');
 
     cy.get('.selected [data-cy="check-done"]').click();
     cy.get('[data-cy="delete-all-done"]').click();

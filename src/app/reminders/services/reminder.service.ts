@@ -79,6 +79,11 @@ export class ReminderService {
       .patch(this.backend.reminderURL(id), rem, {headers: ReminderService.singleResourceHeader});
   }
 
+  pushBack(id: number, dueString: string) {
+    return this.http
+      .patch(this.backend.reminderURL(id), { due: dueString}, {headers: ReminderService.singleResourceHeader});
+  }
+
   deleteMany(ids: number[]) {
     return this.http
       .delete(this.backend.remindersURL(ids));

@@ -5,6 +5,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, range, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-reminders-list',
@@ -27,6 +28,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
   private fetchLimit = 10;
+  pushBackFromNow = true;
 
   constructor(private reminderService: ReminderService,
               private route: ActivatedRoute,
@@ -246,8 +248,33 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   reQuery() {
-    console.log('Re-querying...', { isDue: this.isDue});
+    console.log('Re-querying...', {isDue: this.isDue});
     this.fetchReminders();
+  }
+
+  emitSelectedChange(idx: number, $event: MouseEvent) {
+    const target = $event.target as HTMLElement;
+    const pushingBack = target.tagName === 'BUTTON';
+    if (pushingBack) {
+      return;
+    }
+    this.selectedChange.next(idx);
+  }
+
+  pushBack(r: Reminder, addSeconds: number) {
+    const strDate = r.due; // 2020-11-16T07:20:00
+    let newDate;
+    if (this.pushBackFromNow) {
+      newDate = moment().add(addSeconds, 'seconds');
+    } else {
+      newDate = moment(strDate).add(addSeconds, 'seconds');
+    }
+    const newStrDate = newDate.format('YYYY-MM-DDTHH:mm:ss');
+
+    // Satisfy pgrest backend format for now, not sure how to pass dates effectively yet
+    this.reminderService.pushBack(r.id, newStrDate).subscribe(() => {
+      this.fetchReminders();
+    });
   }
 
   private fetchReminders(doAfterFetch?: () => void) {
@@ -274,4 +301,10 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       });
   }
 
+  pushBackFromNowChar(): string {
+    if (this.pushBackFromNow) {
+      return '>';
+    }
+    return '+';
+  }
 }
