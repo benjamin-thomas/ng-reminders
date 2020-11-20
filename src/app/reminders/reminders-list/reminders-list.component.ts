@@ -3,7 +3,7 @@ import {Reminder} from '../reminder.model';
 import {PaginatedRemindersResponse, ReminderService} from '../services/reminder.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, range, Subscription} from 'rxjs';
+import {BehaviorSubject, interval, range, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 import * as moment from 'moment';
 
@@ -35,19 +35,23 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
   private fetchLimit = 10;
-  pushBackFromNow = true;
-
-  constructor(private reminderService: ReminderService,
-              private route: ActivatedRoute,
-              private router: Router) {
-
-  }
+  private autoRefreshInSeconds = RemindersListComponent.autoRefreshDefault;
+  private inactiveSub: Subscription;
 
   ngOnDestroy(): void {
     this.selectChangeSub.unsubscribe();
+    this.inactiveSub.unsubscribe();
   }
 
   ngOnInit(): void {
+
+    this.inactiveSub = interval(1000).subscribe(() => {
+      this.autoRefreshInSeconds--;
+      if (this.autoRefreshInSeconds <= 0) {
+        this.reQuery(); // refresh
+        this.autoRefreshInSeconds = RemindersListComponent.autoRefreshDefault;
+      }
+    });
 
     // Hydrate selected row from params, once (on first page load)
     this.route.queryParams.pipe(take(1))
@@ -75,6 +79,12 @@ export class RemindersListComponent implements OnInit, OnDestroy {
       });
     });
     this.fetchReminders();
+  }
+
+  @HostListener('document:keydown')
+  @HostListener('document:click')
+  resetInactivityTimer() {
+    this.autoRefreshInSeconds = RemindersListComponent.autoRefreshDefault;
   }
 
   @HostListener('document:keydown.arrowDown', ['$event'])
