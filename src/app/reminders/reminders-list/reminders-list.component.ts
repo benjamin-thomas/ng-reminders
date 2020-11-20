@@ -14,6 +14,13 @@ import * as moment from 'moment';
 })
 export class RemindersListComponent implements OnInit, OnDestroy {
 
+  constructor(private reminderService: ReminderService,
+              private route: ActivatedRoute,
+              private router: Router) {
+  }
+
+  static autoRefreshDefault = 59;
+
   reminders: Reminder[];
   selectedChange = new BehaviorSubject<number>(0);
   selectedIdx: number;
@@ -22,8 +29,8 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   @ViewChild('searchTermInput') searchTermInput: ElementRef;
   total: number;
   isDevMode = isDevMode();
-  // triggered from hitting the tab key from the search input
   isDue = true;
+  pushBackFromNow = true;
   private currOffset = 0;
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
@@ -277,6 +284,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     });
   }
 
+  pushBackFromNowChar(): string {
+    if (this.pushBackFromNow) {
+      return '>';
+    }
+    return '+';
+  }
+
   private fetchReminders(doAfterFetch?: () => void) {
     let searchContentLike: string;
     if (this.searchTerm && !this.searchTerm.includes('*')) {
@@ -299,12 +313,5 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         console.log(err.error);
         alert('Something went wrong!');
       });
-  }
-
-  pushBackFromNowChar(): string {
-    if (this.pushBackFromNow) {
-      return '>';
-    }
-    return '+';
   }
 }
