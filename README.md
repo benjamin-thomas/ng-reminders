@@ -44,7 +44,7 @@ ng test
 cypress open
 ```
 
-### Headles
+### Headless
 ```
 ng test --browsers ChromeHeadless
 cypress run
