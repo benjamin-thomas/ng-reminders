@@ -1,0 +1,39 @@
+# https://docs.docker.com/compose/compose-file/#service-configuration-reference
+# But with dedicated db volume for permission issues otherwise
+version: '3.7'
+services:
+
+  # https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
+  dbmate:
+    image: amacneil/dbmate
+    volumes:
+      - ./db:/db
+    depends_on:
+      - db
+
+  psql:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    entrypoint: /bin/bash
+    env_file:
+      - ~/.env/ng-reminders/node-express/db.env
+    environment:
+      - PGHOST=db
+      - PGUSER=postgres
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      - db
+
+  db:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    restart: always
+    env_file:
+      - ~/.env/ng-reminders/node-express/db.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - /tmp/ng-reminders/node-express/dumps/:/tmp/dumps/
+      - ./log_all.init.sh:/docker-entrypoint-initdb.d/init.sh
+
+volumes:
+  db-data:

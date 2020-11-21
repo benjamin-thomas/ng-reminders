@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+source ~/.env/ng-reminders/node-express/db.env
+
+#docker-compose run --rm --user=$UID dbmate "$@"
+docker-compose run --rm --user=$UID \
+  -e DATABASE_URL="$DBMATE_URL_DEVELOPMENT" \
+  dbmate "$@"
