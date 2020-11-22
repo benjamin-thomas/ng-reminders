@@ -1,33 +1,8 @@
-const url = require('url');
 const utils = require('./utils');
-
-// The Pool constructor does not support passing a Database URL as the parameter.
-const params = url.parse(utils.mustEnv('DATABASE_URL'));
-const auth = params.auth.split(':');
-
-let useSSL = true;
-if (process.env.SKIP_SSL === '1') {
-  useSSL = false;
-}
-
-const config = {
-  user: auth[0],
-  password: auth[1],
-  host: params.hostname,
-  port: params.port,
-  database: params.pathname.split('/')[1],
-  ssl: useSSL,
-};
+connectionString = utils.mustEnv('DATABASE_URL');
 
 const Pool = require('pg').Pool;
-const options = {
-  user: 'me',
-  host: 'localhost',
-  database: 'api',
-  password: 'password',
-  port: 5432,
-};
-const pool = new Pool(config);
+const pool = new Pool({ connectionString });
 
 const getUsers = (req, res) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (err, data) => {
