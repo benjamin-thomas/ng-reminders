@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
-set -e
-npm run build
+
+#npm run build
+echo -e "\033[1;33m==> Use tsc --watch in parallel\033[1;m"
 exec docker-compose run --rm --service-ports web "$@"

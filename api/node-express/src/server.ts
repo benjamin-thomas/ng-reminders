@@ -15,7 +15,7 @@ app.use(
 );
 
 app.get('/', (req: any, res: any) => {
-  res.json({info: 'API server3'});
+  res.json({info: 'API server!'});
 });
 
 app.get('/users', getUsers);

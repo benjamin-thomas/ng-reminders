@@ -4,11 +4,10 @@
   "description": "",
   "scripts": {
     "lint": "eslint --ext .ts ./src",
-    "build": "tsc",
     "prebuild": "npm run lint",
-    "prestart": "npm run build",
+    "build": "tsc",
     "start": "node server.js",
-    "start:dev": "DATABASE_URL=$DATABASE_URL_DEVELOPMENT node ./dist/server.js",
+    "start:dev": "DATABASE_URL=$DATABASE_URL_DEVELOPMENT nodemon ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -30,6 +29,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
+    "nodemon": "^2.0.6",
     "typescript": "^4.1.2"
   }
 }
