@@ -11,11 +11,11 @@ app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     extended: true,
-  })
+  }),
 );
 
 app.get('/', (req: any, res: any) => {
-  res.json({info: 'API server'});
+  res.json({info: 'API server3'});
 });
 
 app.get('/users', getUsers);

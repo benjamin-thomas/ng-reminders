@@ -1,5 +1,6 @@
 #!/bin/bash
 
 set -x
-
+set -e
+npm run build
 exec docker-compose run --rm --service-ports web "$@"

@@ -3,4 +3,6 @@ export const mustEnv = (name: string) => {
   if (env) return env;
 
   throw new Error(`Env var not found: ${name}!`);
-}
+};
+
+// export default mustEnv;
