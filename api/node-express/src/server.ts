@@ -26,6 +26,5 @@ app.put('/users/:id', updateUser);
 app.delete('/users/:id', deleteUser);
 
 app.listen(port, () => {
-  // tslint:disable-next-line:no-console
   console.log(`App running on port: ${port}`);
 });
