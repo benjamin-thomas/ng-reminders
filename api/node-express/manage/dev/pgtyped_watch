@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -x
+
+exec docker-compose run --rm web \
+ /bin/bash -c "PGPASSWORD=\$POSTGRES_PASSWORD npx pgtyped -w -c ./pgtyped.config.json"

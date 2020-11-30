@@ -2,5 +2,5 @@
 
 set -x
 
-echo -e "\033[1;33m==> Use tsc --watch in parallel\033[1;m"
+echo -e "\033[1;33m==> Watch tsc and pgtyped in parallel\033[1;m"
 exec docker-compose run --rm --service-ports web "$@"

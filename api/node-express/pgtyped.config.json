@@ -1,0 +1,16 @@
+{
+  "transforms": [
+    {
+      "mode": "sql",
+      "include": "**/*.sql",
+      "emitTemplate": "{{dir}}/{{name}}.queries.ts"
+    }
+  ],
+  "srcDir": "./src/queries",
+  "failOnError": false,
+  "camelCaseColumnNames": true,
+  "db": {
+    "host": "db",
+    "dbName": "ng_reminders_express_development"
+  }
+}
