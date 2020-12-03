@@ -2,9 +2,11 @@ import {mustEnv} from './utils';
 import {Pool} from 'pg';
 import * as db from './queries/users.queries';
 import * as bcrypt from 'bcrypt';
+import {StatusCodes} from 'http-status-codes';
+
+const _204_NO_CONTENT = StatusCodes.NO_CONTENT;
 
 const connectionString = mustEnv('DATABASE_URL');
-
 const pool = new Pool({connectionString});
 
 export const getUsers = async (req: any, res: any) => {
@@ -14,6 +16,11 @@ export const getUsers = async (req: any, res: any) => {
 
 export const getUserById = async (req: any, res: any) => {
   const user = await db.findUserById.run({userId: req.params.id}, pool);
+  if (user.length === 0) {
+    return res
+      .status(_204_NO_CONTENT)
+      .send();
+  }
   res.status(200).json(user);
 };
 
