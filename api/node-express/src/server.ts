@@ -1,6 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser'; // npm i --save-dev @types/node (I think)
+import cookieParser from 'cookie-parser';
 import {mustEnv} from './utils';
+
+import {login} from './auth';
 import {createUser, deleteUser, getUserById, getUsers, updateUser} from './queries';
 
 const app = express();
@@ -13,6 +16,10 @@ app.use(
     extended: true,
   }),
 );
+
+app.use(cookieParser());
+
+app.post('/login', login);
 
 app.get('/', (req: any, res: any) => {
   res.json({info: 'API server!'});
