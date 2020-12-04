@@ -10,7 +10,7 @@ export interface IFindUserByIdParams {
 export interface IFindUserByIdResult {
   id: string;
   email: string;
-  pwHash: string;
+  pw_hash: string;
 }
 
 /** 'FindUserById' query type */
@@ -38,7 +38,7 @@ export interface IFindUserByEmailParams {
 /** 'FindUserByEmail' return type */
 export interface IFindUserByEmailResult {
   email: string;
-  pwHash: string;
+  pw_hash: string;
 }
 
 /** 'FindUserByEmail' query type */
@@ -65,7 +65,7 @@ export type IFindAllUsersParams = void;
 export interface IFindAllUsersResult {
   id: string;
   email: string;
-  pwHash: string;
+  pw_hash: string;
 }
 
 /** 'FindAllUsers' query type */

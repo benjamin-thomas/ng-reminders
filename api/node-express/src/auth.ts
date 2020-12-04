@@ -29,9 +29,9 @@ export async function login(req: any, res: any) {
   }
 
   const user = users[0];
-  const pwHashVar = user.pwHash;
+  const pwHashVar = user.pw_hash;
 
-  console.log('***DEBUG (camel=true)***', {user, pwHashVar});
+  console.log('***DEBUG (camel=false)***', {user, pwHashVar});
   const passwordMatch = await bcrypt.compare(password, pwHashVar);
 
   if (!passwordMatch) {

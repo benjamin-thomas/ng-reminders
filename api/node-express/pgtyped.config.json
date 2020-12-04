@@ -8,7 +8,7 @@
   ],
   "srcDir": "./src/queries",
   "failOnError": false,
-  "camelCaseColumnNames": true,
+  "camelCaseColumnNames": false,
   "db": {
     "host": "db",
     "dbName": "ng_reminders_express_development"
