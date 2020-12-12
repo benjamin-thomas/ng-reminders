@@ -37,6 +37,7 @@ export interface IFindUserByEmailParams {
 
 /** 'FindUserByEmail' return type */
 export interface IFindUserByEmailResult {
+  id: string;
   email: string;
   pw_hash: string;
 }
@@ -47,12 +48,12 @@ export interface IFindUserByEmailQuery {
   result: IFindUserByEmailResult;
 }
 
-const findUserByEmailIR: any = {"name":"FindUserByEmail","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":142,"b":146,"line":5,"col":48}]}}],"usedParamSet":{"email":true},"statement":{"body":"SELECT email, pw_hash FROM users WHERE email = :email","loc":{"a":94,"b":146,"line":5,"col":0}}};
+const findUserByEmailIR: any = {"name":"FindUserByEmail","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":129,"b":133,"line":5,"col":35}]}}],"usedParamSet":{"email":true},"statement":{"body":"SELECT * FROM users WHERE email = :email","loc":{"a":94,"b":133,"line":5,"col":0}}};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT email, pw_hash FROM users WHERE email = :email
+ * SELECT * FROM users WHERE email = :email
  * ```
  */
 export const findUserByEmail = new PreparedQuery<IFindUserByEmailParams,IFindUserByEmailResult>(findUserByEmailIR);
@@ -74,7 +75,7 @@ export interface IFindAllUsersQuery {
   result: IFindAllUsersResult;
 }
 
-const findAllUsersIR: any = {"name":"FindAllUsers","params":[],"usedParamSet":{},"statement":{"body":"SELECT * FROM users","loc":{"a":175,"b":193,"line":8,"col":0}}};
+const findAllUsersIR: any = {"name":"FindAllUsers","params":[],"usedParamSet":{},"statement":{"body":"SELECT * FROM users","loc":{"a":162,"b":180,"line":8,"col":0}}};
 
 /**
  * Query generated from SQL:
@@ -102,7 +103,7 @@ export interface IInsertUserQuery {
   result: IInsertUserResult;
 }
 
-const insertUserIR: any = {"name":"InsertUser","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":264,"b":268,"line":11,"col":44}]}},{"name":"pwHash","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":272,"b":277,"line":11,"col":52}]}}],"usedParamSet":{"email":true,"pwHash":true},"statement":{"body":"INSERT INTO users (email, pw_hash) VALUES (:email, :pwHash) RETURNING id","loc":{"a":220,"b":291,"line":11,"col":0}}};
+const insertUserIR: any = {"name":"InsertUser","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":251,"b":255,"line":11,"col":44}]}},{"name":"pwHash","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":259,"b":264,"line":11,"col":52}]}}],"usedParamSet":{"email":true,"pwHash":true},"statement":{"body":"INSERT INTO users (email, pw_hash) VALUES (:email, :pwHash) RETURNING id","loc":{"a":207,"b":278,"line":11,"col":0}}};
 
 /**
  * Query generated from SQL:
@@ -129,7 +130,7 @@ export interface IUpdateUserQuery {
   result: IUpdateUserResult;
 }
 
-const updateUserIR: any = {"name":"UpdateUser","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":356,"b":360,"line":15,"col":25}]}},{"name":"pwHash","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":397,"b":402,"line":16,"col":27}]}},{"name":"id","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":427,"b":428,"line":17,"col":13}]}}],"usedParamSet":{"email":true,"pwHash":true,"id":true},"statement":{"body":"UPDATE users\n   SET email = COALESCE(:email, email)\n     , pw_hash = COALESCE(:pwHash, pw_hash)\n WHERE id = :id","loc":{"a":318,"b":428,"line":14,"col":0}}};
+const updateUserIR: any = {"name":"UpdateUser","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":343,"b":347,"line":15,"col":25}]}},{"name":"pwHash","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":384,"b":389,"line":16,"col":27}]}},{"name":"id","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":414,"b":415,"line":17,"col":13}]}}],"usedParamSet":{"email":true,"pwHash":true,"id":true},"statement":{"body":"UPDATE users\n   SET email = COALESCE(:email, email)\n     , pw_hash = COALESCE(:pwHash, pw_hash)\n WHERE id = :id","loc":{"a":305,"b":415,"line":14,"col":0}}};
 
 /**
  * Query generated from SQL:
@@ -157,7 +158,7 @@ export interface IDeleteUserQuery {
   result: IDeleteUserResult;
 }
 
-const deleteUserIR: any = {"name":"DeleteUser","params":[{"name":"id","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":485,"b":486,"line":20,"col":30}]}}],"usedParamSet":{"id":true},"statement":{"body":"DELETE FROM users WHERE id = :id","loc":{"a":455,"b":486,"line":20,"col":0}}};
+const deleteUserIR: any = {"name":"DeleteUser","params":[{"name":"id","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":472,"b":473,"line":20,"col":30}]}}],"usedParamSet":{"id":true},"statement":{"body":"DELETE FROM users WHERE id = :id","loc":{"a":442,"b":473,"line":20,"col":0}}};
 
 /**
  * Query generated from SQL:

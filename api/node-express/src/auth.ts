@@ -1,4 +1,5 @@
-import * as jwt from 'jsonwebtoken';
+import {Request, Response} from 'express';
+
 import * as bcrypt from 'bcrypt';
 
 import {mustEnv} from './utils';
@@ -6,50 +7,37 @@ import {StatusCodes} from 'http-status-codes';
 import * as qry from './queries/users.queries';
 import {pool} from './queries/db-conn';
 
-const secret: string = mustEnv('EXPRESS_JWT_SECRET');
+declare module 'express-session' {
+  // eslint-disable-next-line no-unused-vars
+  interface Session {
+    userId: number;
+  }
+}
+
+const secret: string = mustEnv('SESSION_SECRET');
 
 const _401_UNAUTHORIZED = StatusCodes.UNAUTHORIZED;
 
 // eslint-disable-next-line require-jsdoc
-export async function login(req: any, res: any) {
+export async function login(req: Request, res: Response) {
   const email = req.body.email;
   const password = req.body.password;
 
   // eslint-disable-next-line camelcase
-  const _401_unauthorized = (msg: string) => {
-    console.log({msg});
-    res.status(_401_UNAUTHORIZED).send();
-  };
-
   console.log({email, password, secret});
   const users = await qry.findUserByEmail.run({email}, pool);
 
   if (users.length !== 1) {
-    return _401_unauthorized('No user or too many users found!');
+    return res.status(_401_UNAUTHORIZED).send();
   }
 
   const user = users[0];
-  const pwHashVar = user.pw_hash;
-
-  console.log('***DEBUG (camel=false)***', {user, pwHashVar});
-  const passwordMatch = await bcrypt.compare(password, pwHashVar);
+  const passwordMatch = await bcrypt.compare(password, user.pw_hash);
 
   if (!passwordMatch) {
-    return _401_unauthorized('No password match!');
+    return res.status(_401_UNAUTHORIZED).send();
   }
 
-  const payload = {email};
-  const token = jwt.sign(payload, secret, {
-    algorithm: 'HS256',
-    expiresIn: '1h',
-  });
-
-  res.cookie('jwt', token, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'strict',
-    // signed: true, /* try later */
-  });
-
+  req.session.userId = Number(user.id);
   res.send();
 }

@@ -2,7 +2,7 @@
 SELECT * FROM users WHERE id = :userId;
 
 /* @name FindUserByEmail */
-SELECT email, pw_hash FROM users WHERE email = :email;
+SELECT * FROM users WHERE email = :email;
 
 /* @name FindAllUsers */
 SELECT * FROM users;

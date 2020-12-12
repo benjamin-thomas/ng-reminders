@@ -12,3 +12,4 @@ To read:
 
 - http://cryto.net/~joepie91/blog/2016/06/13/stop-using-jwt-for-sessions/
 - https://github.com/expressjs/cookie-session
+- https://hacks.mozilla.org/category/a-node-js-holiday-season/

@@ -14,9 +14,12 @@ services:
     depends_on:
       - db
     env_file:
+      - ~/.env/ng-reminders/node-express/web.env
       - ~/.env/ng-reminders/node-express/db.env
     environment:
       - PORT=8080
+      - NODE_ENV=development
+      - DEBUG=express-session
       - SKIP_SSL=1
       - ${DATABASE_URL}:$DATABASE_URL_DEVELOPMENT
 

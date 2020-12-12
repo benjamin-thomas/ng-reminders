@@ -1,3 +1,5 @@
+import {Request, Response} from 'express';
+
 import * as qry from './queries/users.queries';
 import * as bcrypt from 'bcrypt';
 import {StatusCodes} from 'http-status-codes';
@@ -5,12 +7,12 @@ import {pool} from './queries/db-conn';
 
 const _204_NO_CONTENT = StatusCodes.NO_CONTENT;
 
-export const getUsers = async (req: any, res: any) => {
+export const getUsers = async (req: Request, res: Response) => {
   const users = await qry.findAllUsers.run(undefined, pool);
   res.status(200).json(users);
 };
 
-export const getUserById = async (req: any, res: any) => {
+export const getUserById = async (req: Request, res: Response) => {
   const user = await qry.findUserById.run({userId: req.params.id}, pool);
   if (user.length === 0) {
     return res
@@ -21,7 +23,7 @@ export const getUserById = async (req: any, res: any) => {
 };
 
 const saltRounds = 10; // rounds=10: ~10 hashes/sec on a 2GHz core
-export const createUser = async (req: any, res: any) => {
+export const createUser = async (req: Request, res: Response) => {
   const {email, password} = req.body;
 
   const pwHash = await bcrypt.hash(password, saltRounds);
@@ -32,7 +34,7 @@ export const createUser = async (req: any, res: any) => {
   res.status(201).json(`New userID: ${newUser.id}`);
 };
 
-export const updateUser = async (req: any, res: any) => {
+export const updateUser = async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const {email, password} = req.body;
 
@@ -49,7 +51,7 @@ export const updateUser = async (req: any, res: any) => {
   res.status(200).send(`User modified with ID: ${id}`);
 };
 
-export const deleteUser = async (req: any, res: any) => {
+export const deleteUser = async (req: Request, res: Response) => {
   const id = req.params.id;
   await qry.deleteUser.run({id}, pool);
 

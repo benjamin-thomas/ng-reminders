@@ -1,6 +1,11 @@
 #!/bin/bash
 
-set -x
+TO_RUN="
+  tsc --watch
+  ./manage/dev/pgtyped_watch
+"
 
-echo -e "\033[1;33m==> Watch tsc and pgtyped in parallel\033[1;m"
+echo -e "\033[1;33m==> Run in parallel:$TO_RUN\033[1;m"
+
+set -x
 exec docker-compose run --rm --service-ports web "$@"
