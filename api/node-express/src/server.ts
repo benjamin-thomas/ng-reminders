@@ -12,10 +12,12 @@ import {pool} from './queries/db-conn';
 import {login} from './auth';
 import {createUser, deleteUser, getUserById, getUsers, updateUser} from './queries';
 import {authenticated} from './middleware';
+import csurf from 'csurf';
 
 const app = express();
 const port = mustEnv('PORT');
-const secret: string = mustEnv('SESSION_SECRET');
+const sessionSecret: string = mustEnv('SESSION_SECRET');
+const cookiesSigningSecret: string = mustEnv('COOKIES_SIGNING_SECRET');
 const env = mustEnv('NODE_ENV');
 console.log({env});
 
@@ -34,7 +36,44 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser(cookiesSigningSecret));
+
+// Expiry is set by the sessionStore's ttl
+// Returns a session cookie
+const envNotDev = env !== 'development';
+const normalSession = session({
+  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
+  store: sessionStore,
+  secret: sessionSecret,
+  resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
+  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
+  cookie: {
+    secure: envNotDev, // Default: false, transmit over SSL only
+    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
+    sameSite: 'strict', // Default: not sure, "not fully standardized"
+  },
+});
+
+const ONE_SECOND = 1000;
+// Keeping for ref
+// eslint-disable-next-line no-unused-vars
+const shortLivedSession = session({
+  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
+  store: sessionStore,
+  secret: sessionSecret,
+  resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
+  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
+  cookie: {
+    secure: envNotDev, // Default: false, transmit over SSL only
+    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
+    sameSite: 'strict', // Default: not sure, "not fully standardized"
+    maxAge: 60 * ONE_SECOND, // Overrides pg session's ttl
+  },
+
+  rolling: true, // Update cookie with maxAge on every request.
+});
+
+app.use(normalSession);
 
 // https://www.npmjs.com/package/csurf
 /*
@@ -47,43 +86,25 @@ then the module changes behavior and no longer uses req.session.
 This means you are no longer required to use a session middleware.
 Instead, you do need to use the cookie-parser middleware in your app before this middleware.
  */
-// const csrfProtection = app.use(csurf({cookie: true})); // CSRF protection
+const csrfProtection = csurf(); // Stores the CSRF secret on the session, server side
+app.use(csrfProtection);
 
-// Expiry is set by the sessionStore's ttl
-// Returns a session cookie
-const normalSession = session({
-  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
-  store: sessionStore,
-  secret: secret,
-  resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
-  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
-  cookie: {
-    secure: env !== 'development', // Default: false, transmit over SSL only
-    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
-    sameSite: 'strict', // Default: not sure, "not fully standardized"
-  },
+// This endpoint will be called by the SPA once
+app.get('/csrf', (req: Request, res: Response) => {
+  console.log({csrf: req.csrfToken()});
+  res.cookie('XSRF-TOKEN', req.csrfToken(), {
+    httpOnly: false, // false so JS may access this token
+    secure: envNotDev,
+    sameSite: 'strict',
+    signed: true,
+  }); // This would be for Angular
+  res.json('NOOP!');
 });
 
-const ONE_SECOND = 1000;
-// Keeping for ref
-// eslint-disable-next-line no-unused-vars
-const shortLivedSession = session({
-  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
-  store: sessionStore,
-  secret: secret,
-  resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
-  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
-  cookie: {
-    secure: env !== 'development', // Default: false, transmit over SSL only
-    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
-    sameSite: 'strict', // Default: not sure, "not fully standardized"
-    maxAge: 60 * ONE_SECOND, // Overrides pg session's ttl
-  },
-
-  rolling: true, // Update cookie with maxAge on every request.
+// This endpoint is just for testing
+app.post('/csrf', (req: Request, res: Response) => {
+  res.send('OK!');
 });
-
-app.use(normalSession);
 
 app.post('/login', login);
 app.get('/logout', (req: Request, res: Response) => {
@@ -103,12 +124,6 @@ app.get('/', (req: any, res: Response) => {
     session: req.sessionID,
   });
 });
-
-//
-// const csrfProtection = app.use(csurf({cookie: true})); // CSRF protection
-// app.get('/noop', csrfProtection, (req: Request, res: Response) => {
-//   res.json('NOOP!');
-// });
 
 app.get('/users', getUsers);
 app.post('/users', createUser);
