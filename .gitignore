@@ -50,3 +50,6 @@ Thumbs.db
 /cypress/screenshots/
 
 /explore-designs/css/
+
+**/nginx_dev/cert.pem
+**/nginx_dev/key.pem
