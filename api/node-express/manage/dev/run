@@ -8,4 +8,4 @@ TO_RUN="
 echo -e "\033[1;33m==> Run in parallel:$TO_RUN\033[1;m"
 
 set -x
-exec docker-compose run --rm --service-ports web "$@"
+exec docker-compose run --rm --service-ports nginx_proxy

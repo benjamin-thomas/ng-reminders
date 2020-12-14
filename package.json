@@ -4,9 +4,9 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "e2e:ci": "start-server-and-test start http://ng-reminders.test:4200 cy:run",
+    "e2e:ci": "start-server-and-test start http://ng.reminders.test:4200 cy:run",
     "ng": "ng",
-    "start": "ng serve --host ng-reminders.test",
+    "start": "ng serve --host ng.reminders.test --ssl",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

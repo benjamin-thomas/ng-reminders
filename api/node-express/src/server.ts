@@ -6,6 +6,9 @@ import helmet from 'helmet/dist';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
 
+// Blog, to read (many articles)
+// https://flaviocopes.com/express-https-self-signed-certificate/
+
 import {mustEnv} from './utils';
 import {pool} from './queries/db-conn';
 
@@ -29,8 +32,13 @@ const sessionStore = new PgSession({
   ttl: ONE_WEEK, // Specified in seconds. Defaults to maxAge equiv or 24h
 });
 
+app.set('trust proxy', 1); // trust first proxy
+const notDevEnv = env !== 'development';
+
 // Security
-app.use(helmet());
+if (notDevEnv) {
+  app.use(helmet());
+}
 
 // Logger
 app.use(morgan('dev'));
@@ -40,37 +48,23 @@ app.use(cookieParser(cookiesSigningSecret));
 
 // Expiry is set by the sessionStore's ttl
 // Returns a session cookie
-const envNotDev = env !== 'development';
 const normalSession = session({
-  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
+  name: 'sid', // The default value is 'connect.sid'
   store: sessionStore,
   secret: sessionSecret,
   resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
-  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
+
+  // false will be future default it seems, due to cookie consent requirements
+  saveUninitialized: false,
+
   cookie: {
-    secure: envNotDev, // Default: false, transmit over SSL only
-    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
+    httpOnly: true,
+    // secure: notDevEnv,
+    secure: true,
+    signed: true,
+    domain: 'reminders.test',
     sameSite: 'strict', // Default: not sure, "not fully standardized"
   },
-});
-
-const ONE_SECOND = 1000;
-// Keeping for ref
-// eslint-disable-next-line no-unused-vars
-const shortLivedSession = session({
-  name: 'ng-reminders_node-express.sid', // The default value is 'connect.sid'
-  store: sessionStore,
-  secret: sessionSecret,
-  resave: false, // do not save if not used on request, connect-pg-simple docs set this to false
-  saveUninitialized: false, // false will be future default it seems, due to cookie consent requirements
-  cookie: {
-    secure: envNotDev, // Default: false, transmit over SSL only
-    httpOnly: true, // Default: true, prevents js from accessing it. Keeping for clarity
-    sameSite: 'strict', // Default: not sure, "not fully standardized"
-    maxAge: 60 * ONE_SECOND, // Overrides pg session's ttl
-  },
-
-  rolling: true, // Update cookie with maxAge on every request.
 });
 
 app.use(normalSession);
@@ -90,15 +84,24 @@ const csrfProtection = csurf(); // Stores the CSRF secret on the session, server
 app.use(csrfProtection);
 
 // This endpoint will be called by the SPA once
-app.get('/csrf', (req: Request, res: Response) => {
+app.get('/csrf', (req: any, res: Response) => {
   console.log({csrf: req.csrfToken()});
+  // res.header('XSRF-TOKEN', req.csrfToken());
+  // res.header('Access-Control-Expose-Headers', 'XSRF-TOKEN');
+  res.header('Access-Control-Allow-Origin', 'https://ng.reminders.test:4200');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  // res.header('Allow-Origin-With-Credentials', 'true');
+
   res.cookie('XSRF-TOKEN', req.csrfToken(), {
-    httpOnly: false, // false so JS may access this token
-    secure: envNotDev,
-    sameSite: 'strict',
+    httpOnly: true,
+    secure: notDevEnv,
     signed: true,
+    domain: 'reminders.test',
+    sameSite: 'strict',
   }); // This would be for Angular
-  res.json('NOOP!');
+
+  req.session.views = (req.session.views || 0) + 1;
+  res.json(`Server side view count: ${req.session.views}`);
 });
 
 // This endpoint is just for testing

@@ -8,7 +8,7 @@ services:
     command: npm run start:dev
     init: true # fixes control-c not working
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.6:8080:8080"
     volumes:
       - .:/usr/src/app
     depends_on:
@@ -22,6 +22,15 @@ services:
       - DEBUG=express-session
       - SKIP_SSL=1
       - ${DATABASE_URL}:$DATABASE_URL_DEVELOPMENT
+
+  nginx_proxy:
+    image: nginx
+    ports:
+      - "127.0.0.7:443:443"
+    depends_on:
+      - web
+    volumes:
+      - ./nginx_dev/:/etc/nginx/conf.d/
 
   # https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
   dbmate:

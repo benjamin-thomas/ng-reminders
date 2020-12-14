@@ -76,7 +76,7 @@ ng test --browsers ChromeHeadless --watch=false && cypress run
    - npm install --save-dev start-server-and-test
    - update package.json
       ```
-      "e2e:ci": "start-server-and-test start http://ng-reminders.test:4200 cy:run",
+      "e2e:ci": "start-server-and-test start http://ng.reminders.test:4200 cy:run",
       ```
    - npm run e2e:ci
 

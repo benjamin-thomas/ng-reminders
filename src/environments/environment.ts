@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiHost: 'http://localhost:4444',
+  apiHost: 'https://api-proxy.reminders.test',
 };
 
 /*

@@ -20,6 +20,7 @@ import {BackendSelectComponent} from './backend/backend-select/backend-select.co
 import {BackendStatusComponent} from './backend/backend-status/backend-status.component';
 import '@angular/common/locales/global/fr';
 import {AutoSizeInputModule} from 'ngx-autosize-input';
+import { HelloComponent } from './hello/hello.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {AutoSizeInputModule} from 'ngx-autosize-input';
     LogoutComponent,
     BackendSelectComponent,
     BackendStatusComponent,
+    HelloComponent,
   ],
   imports: [
     BrowserModule,
