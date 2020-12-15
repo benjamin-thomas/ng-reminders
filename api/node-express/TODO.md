@@ -18,3 +18,9 @@ To read:
 ---
 
 Document with swagger
+
+---
+
+## To read
+Blog, to read (many articles)
+https://flaviocopes.com/express-https-self-signed-certificate/

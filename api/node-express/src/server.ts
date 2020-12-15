@@ -5,10 +5,6 @@ import morgan from 'morgan';
 import helmet from 'helmet/dist';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
-
-// Blog, to read (many articles)
-// https://flaviocopes.com/express-https-self-signed-certificate/
-
 import {mustEnv} from './utils';
 import {pool} from './queries/db-conn';
 
@@ -21,24 +17,23 @@ const app = express();
 const port = mustEnv('PORT');
 const sessionSecret: string = mustEnv('SESSION_SECRET');
 const cookiesSigningSecret: string = mustEnv('COOKIES_SIGNING_SECRET');
-const env = mustEnv('NODE_ENV');
-console.log({env});
 
 const PgSession = connectPgSimple(session);
 const ONE_WEEK = 3600 * 24 * 7; // require login after inactivity
+
 const sessionStore = new PgSession({
   pool: pool,
   tableName: 'sessions',
   ttl: ONE_WEEK, // Specified in seconds. Defaults to maxAge equiv or 24h
 });
 
-app.set('trust proxy', 1); // trust first proxy
-const notDevEnv = env !== 'development';
+// Since I'm using an nginx reverse proxy to establish the TLS connection, this setting is required.
+// Otherwise, express-session won't set the cookie with the `secure` flag.
+// Oddly, the secured `XSRF-TOKEN` cookie set by cookie-parser does not require this setting.
+app.set('trust proxy', 1);
 
 // Security
-if (notDevEnv) {
-  app.use(helmet());
-}
+app.use(helmet());
 
 // Logger
 app.use(morgan('dev'));
@@ -59,7 +54,6 @@ const normalSession = session({
 
   cookie: {
     httpOnly: true,
-    // secure: notDevEnv,
     secure: true,
     signed: true,
     domain: 'reminders.test',
@@ -69,36 +63,24 @@ const normalSession = session({
 
 app.use(normalSession);
 
-// https://www.npmjs.com/package/csurf
-/*
-cookie
-Determines if the token secret for the user should be stored in a cookie or in req.session.
-Storing the token secret in a cookie implements the double submit cookie pattern. Defaults to false.
-
-When set to true (or an object of options for the cookie),
-then the module changes behavior and no longer uses req.session.
-This means you are no longer required to use a session middleware.
-Instead, you do need to use the cookie-parser middleware in your app before this middleware.
- */
 const csrfProtection = csurf(); // Stores the CSRF secret on the session, server side
 app.use(csrfProtection);
 
+const ENV = mustEnv('NODE_ENV');
+const ORIGIN = ENV === 'development' ? 'https://ng.reminders.test:4200' : 'TODO';
+
 // This endpoint will be called by the SPA once
 app.get('/csrf', (req: any, res: Response) => {
-  console.log({csrf: req.csrfToken()});
-  // res.header('XSRF-TOKEN', req.csrfToken());
-  // res.header('Access-Control-Expose-Headers', 'XSRF-TOKEN');
-  res.header('Access-Control-Allow-Origin', 'https://ng.reminders.test:4200');
+  res.header('Access-Control-Allow-Origin', ORIGIN);
   res.header('Access-Control-Allow-Credentials', 'true');
-  // res.header('Allow-Origin-With-Credentials', 'true');
 
   res.cookie('XSRF-TOKEN', req.csrfToken(), {
     httpOnly: true,
-    secure: notDevEnv,
+    secure: true,
     signed: true,
     domain: 'reminders.test',
     sameSite: 'strict',
-  }); // This would be for Angular
+  });
 
   req.session.views = (req.session.views || 0) + 1;
   res.json(`Server side view count: ${req.session.views}`);
