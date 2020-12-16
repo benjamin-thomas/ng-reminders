@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpBackend, HttpClient, HttpResponse} from '@angular/common/http';
+import {CookieService} from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-hello',
@@ -11,8 +12,10 @@ export class HelloComponent implements OnInit {
 
   // https://levelup.gitconnected.com/the-correct-way-to-make-api-requests-in-an-angular-application-22a079fe8413
   private httpNoIntercept: HttpClient;
+  xsrf: string;
 
-  constructor(private httpBackend: HttpBackend) {
+  constructor(private httpBackend: HttpBackend,
+              private cookieService: CookieService) {
     this.httpNoIntercept = new HttpClient(httpBackend) // no interceptors
   }
 
@@ -21,9 +24,9 @@ export class HelloComponent implements OnInit {
       observe: 'response',
       withCredentials: true, // required for API cookies to be set
     }).subscribe((res: HttpResponse<string>) => {
-      const x = res.headers.get('XSRF-TOKEN');
+      this.xsrf = this.cookieService.get('XSRF-TOKEN');
       const vals = res.headers.keys();
-      console.log({x});
+      console.log({xsrf: this.xsrf});
       console.log({vals});
       vals.forEach(v => console.log({v}));
       console.log({res, localCookies: document.cookie});
@@ -31,4 +34,16 @@ export class HelloComponent implements OnInit {
     })
   }
 
+  increment10() {
+    this.httpNoIntercept.post<string>('https://api-proxy.reminders.test/csrf', null, {
+      withCredentials: true,
+      headers: {
+        'X-XSRF-TOKEN': escape(this.cookieService.get('XSRF-TOKEN')),
+        // 'Access-Control-Request-Method': 'POST',
+        // 'Access-Control-Request-Headers': 'X-XSRF-TOKEN, Content-Type',
+      }
+    }).subscribe(res => {
+      console.log({res});
+    });
+  }
 }

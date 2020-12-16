@@ -21,6 +21,7 @@ import {BackendStatusComponent} from './backend/backend-status/backend-status.co
 import '@angular/common/locales/global/fr';
 import {AutoSizeInputModule} from 'ngx-autosize-input';
 import { HelloComponent } from './hello/hello.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { HelloComponent } from './hello/hello.component';
       useClass: AuthInterceptor,
       multi: true
     },
-    {provide: LOCALE_ID, useValue: 'fr'}
+    {provide: LOCALE_ID, useValue: 'fr'},
+    CookieService,
   ],
   bootstrap: [AppComponent]
 })
