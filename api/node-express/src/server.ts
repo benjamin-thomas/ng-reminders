@@ -4,15 +4,23 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
+import csurf from 'csurf';
+import cors from 'cors';
+import helmet from 'helmet/dist';
+
 import {mustEnv} from './utils';
 import {pool} from './queries/db-conn';
 
 import {login} from './auth';
 import {createUser, deleteUser, getUserById, getUsers, updateUser} from './queries';
 import {authenticated} from './middleware';
-import csurf from 'csurf';
-import cors from 'cors';
-import helmet from 'helmet/dist';
+
+declare module 'express-session' {
+  // eslint-disable-next-line no-unused-vars
+  interface Session {
+    views?: number;
+  }
+}
 
 const ENV = mustEnv('NODE_ENV');
 const PORT = mustEnv('PORT');
@@ -112,7 +120,7 @@ const csrfProtection = csurf(); // Stores the CSRF secret on the session, server
 app.use(csrfProtection);
 
 // This endpoint will be called by the SPA once, and cache the CSRF token via the cookie once.
-app.get('/csrf', (req: any, res: Response) => {
+app.get('/csrf', (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Origin', ORIGIN);
   res.header('Access-Control-Allow-Credentials', 'true');
 
@@ -137,7 +145,7 @@ app.get('/csrf', (req: any, res: Response) => {
 });
 
 // Temporary endpoint, to test that the CSRF mechanism is functionnal
-app.post('/csrf', (req: any, res: Response) => {
+app.post('/csrf', (req: Request, res: Response) => {
   req.session.views = (req.session.views || 0) + 1;
   req.session.views += 10;
   res.end();
@@ -151,7 +159,7 @@ app.get('/logout', (req: Request, res: Response) => {
   res.redirect('/');
 });
 
-app.get('/', (req: any, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
   req.session.views = (req.session.views || 0) + 1;
   res.json({
     info: 'API server!',
@@ -168,27 +176,6 @@ app.post('/users', createUser);
 app.get('/users/:id', authenticated, getUserById);
 app.patch('/users/:id', updateUser);
 app.delete('/users/:id', deleteUser);
-
-// Keeping for ref
-/*
-// error handler
-app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
-  if (err.code !== 'EBADCSRFTOKEN') return next(err);
-
-  const xsrfHeader2 = req.headers['x-xsrf-token'] || '';
-  console.log({
-    xsrfCookie: req.signedCookies['XSRF-TOKEN'],
-    xsrfCookie2: req.cookies['XSRF-TOKEN'],
-    xsrfHeader: req.headers['X-XSRF-TOKEN'],
-    xsrfHeader2: unescape(xsrfHeader2.toString()),
-    want: req.csrfToken(),
-  });
-
-  // handle CSRF token errors here
-  res.status(403);
-  res.send('form tampered with');
-});
- */
 
 app.listen(PORT, () => {
   console.log(`App running on port: ${PORT}`);
