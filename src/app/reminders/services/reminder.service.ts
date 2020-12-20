@@ -34,7 +34,7 @@ export class ReminderService {
   }
 
   getAll(limit: number, offset: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
-    const url = this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
+    const url = 'https://api-proxy.reminders.test/reminders?'; // this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
 
     return this.http
       .get<Reminder[]>(url, {

@@ -1,5 +1,32 @@
-/** Types generated for queries found in "src/queries/users.sql" */
+/** Types generated for queries found in "src/db/in/users.sql" */
 import { PreparedQuery } from '@pgtyped/query';
+
+/** 'FindAllUsers' parameters type */
+export type IFindAllUsersParams = void;
+
+/** 'FindAllUsers' return type */
+export interface IFindAllUsersResult {
+  id: string;
+  email: string;
+  pw_hash: string;
+}
+
+/** 'FindAllUsers' query type */
+export interface IFindAllUsersQuery {
+  params: IFindAllUsersParams;
+  result: IFindAllUsersResult;
+}
+
+const findAllUsersIR: any = {"name":"FindAllUsers","params":[],"usedParamSet":{},"statement":{"body":"SELECT * FROM users","loc":{"a":25,"b":43,"line":2,"col":0}}};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT * FROM users
+ * ```
+ */
+export const findAllUsers = new PreparedQuery<IFindAllUsersParams,IFindAllUsersResult>(findAllUsersIR);
+
 
 /** 'FindUserById' parameters type */
 export interface IFindUserByIdParams {
@@ -19,7 +46,7 @@ export interface IFindUserByIdQuery {
   result: IFindUserByIdResult;
 }
 
-const findUserByIdIR: any = {"name":"FindUserById","params":[{"name":"userId","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":57,"b":62,"line":2,"col":32}]}}],"usedParamSet":{"userId":true},"statement":{"body":"SELECT * FROM users WHERE id = :userId","loc":{"a":25,"b":62,"line":2,"col":0}}};
+const findUserByIdIR: any = {"name":"FindUserById","params":[{"name":"userId","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":104,"b":109,"line":5,"col":32}]}}],"usedParamSet":{"userId":true},"statement":{"body":"SELECT * FROM users WHERE id = :userId","loc":{"a":72,"b":109,"line":5,"col":0}}};
 
 /**
  * Query generated from SQL:
@@ -48,7 +75,7 @@ export interface IFindUserByEmailQuery {
   result: IFindUserByEmailResult;
 }
 
-const findUserByEmailIR: any = {"name":"FindUserByEmail","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":129,"b":133,"line":5,"col":35}]}}],"usedParamSet":{"email":true},"statement":{"body":"SELECT * FROM users WHERE email = :email","loc":{"a":94,"b":133,"line":5,"col":0}}};
+const findUserByEmailIR: any = {"name":"FindUserByEmail","params":[{"name":"email","transform":{"type":"scalar"},"codeRefs":{"used":[{"a":176,"b":180,"line":8,"col":35}]}}],"usedParamSet":{"email":true},"statement":{"body":"SELECT * FROM users WHERE email = :email","loc":{"a":141,"b":180,"line":8,"col":0}}};
 
 /**
  * Query generated from SQL:
@@ -57,33 +84,6 @@ const findUserByEmailIR: any = {"name":"FindUserByEmail","params":[{"name":"emai
  * ```
  */
 export const findUserByEmail = new PreparedQuery<IFindUserByEmailParams,IFindUserByEmailResult>(findUserByEmailIR);
-
-
-/** 'FindAllUsers' parameters type */
-export type IFindAllUsersParams = void;
-
-/** 'FindAllUsers' return type */
-export interface IFindAllUsersResult {
-  id: string;
-  email: string;
-  pw_hash: string;
-}
-
-/** 'FindAllUsers' query type */
-export interface IFindAllUsersQuery {
-  params: IFindAllUsersParams;
-  result: IFindAllUsersResult;
-}
-
-const findAllUsersIR: any = {"name":"FindAllUsers","params":[],"usedParamSet":{},"statement":{"body":"SELECT * FROM users","loc":{"a":162,"b":180,"line":8,"col":0}}};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT * FROM users
- * ```
- */
-export const findAllUsers = new PreparedQuery<IFindAllUsersParams,IFindAllUsersResult>(findAllUsersIR);
 
 
 /** 'InsertUser' parameters type */

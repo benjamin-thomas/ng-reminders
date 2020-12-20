@@ -5,7 +5,8 @@ Next:
  - https://stackabuse.com/authentication-and-authorization-with-jwts-in-express-js/
  - https://medium.com/better-programming/implementing-authentication-in-nodejs-with-express-and-jwt-codelab-1-c33afbccf1be
  - https://stackabuse.com/handling-authentication-in-express-js/
-- handle reminders CRUD
+
+-  handle reminders CRUD <-- this
 
 
 To read:
@@ -24,3 +25,10 @@ Document with swagger
 ## To read
 Blog, to read (many articles)
 https://flaviocopes.com/express-https-self-signed-certificate/
+
+
+---
+
+Try this migration tool
+
+https://github.com/graphile/migrate

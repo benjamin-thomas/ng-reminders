@@ -14,7 +14,8 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "indent": ["error", 2],
+    "require-jsdoc": "off",
+    "indent": ["error", 2, { "SwitchCase":  1}],
     "max-len": ["error", 100],
     "quotes": ["error", "single", { "avoidEscape": true }]
   },

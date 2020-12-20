@@ -1,7 +1,7 @@
 -- migrate:up
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
-  , email    TEXT NOT NULL
+  , email    TEXT NOT NULL UNIQUE CHECK (email LIKE '%@%')
   -- , email    TEXT PRIMARY KEY
   , pw_hash  TEXT NOT NULL CHECK (length(pw_hash) = 60) -- 60=bcrypt
 );

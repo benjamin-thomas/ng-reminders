@@ -1,5 +1,5 @@
 import express, {NextFunction, Request, Response} from 'express';
-import bodyParser from 'body-parser'; // npm i --save-dev @types/node (I think)
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import session from 'express-session';
@@ -9,11 +9,12 @@ import cors from 'cors';
 import helmet from 'helmet/dist';
 
 import {mustEnv} from './utils';
-import {pool} from './queries/db-conn';
+import {pool} from './db/db-conn';
 
-import {login} from './auth';
-import {createUser, deleteUser, getUserById, getUsers, updateUser} from './queries';
-import {authenticated} from './middleware';
+import {loginAsync} from './auth';
+import {createUser, deleteUser, getUserById, getUsers, updateUser} from './handlers/userHandlers';
+import {requireAuthentication} from './middleware';
+import {createReminder, getReminders} from './handlers/reminderHandlers';
 
 declare module 'express-session' {
   // eslint-disable-next-line no-unused-vars
@@ -36,10 +37,44 @@ const ORIGIN = IS_DEV_ENV ? 'https://ng.reminders.test:4200' : 'TODO';
 
 const app = express();
 
+type Handler = (req: Request, res: Response, next: NextFunction) => Promise<void | Response>;
+/*
+ Express does not handle the async/await pattern, so there are 2 options:
+   1. Surround any function with a try/catch -> res.status(500) block
+   2. Surround the async function with this middleware
+ */
+const catchAsync = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => {
+  return Promise
+    .resolve(fn(req, res, next))
+    .catch(next);
+};
+
+interface ReqError {
+  status: number
+  message: string
+}
+
+const noHtmlErrors = async (err: ReqError, req: Request, res: Response, next: NextFunction) => {
+  console.log(err);
+  let payload;
+  if (IS_DEV_ENV) {
+    payload = {unhandledError: err.message};
+  } else {
+    payload = {error: 'Something went wrong!'};
+  }
+  res
+    .status(err.status || 555)
+    .json(payload);
+};
+
+
 if (IS_DEV_ENV) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     console.log('****** HEADERS ********');
     console.log(req.headers);
+
+    console.log('****** BODY ********');
+    console.log(JSON.stringify(req.body));
     next();
   });
 }
@@ -91,7 +126,14 @@ And adds theses headers to every endpoint:
 app.use(cors({
   origin: ORIGIN,
   credentials: true,
-  allowedHeaders: ['X-XSRF-TOKEN'],
+  allowedHeaders: [
+    'X-XSRF-TOKEN',
+    'Content-Type', // front end sends application/json
+    'Prefer', // Mimic pgrest (count=exact, etc.)
+  ],
+  exposedHeaders: [ // Angular won't "see" the headers otherwise
+    'Content-Range',
+  ],
 }));
 
 // Returns a session cookie.
@@ -151,7 +193,8 @@ app.post('/csrf', (req: Request, res: Response) => {
   res.end();
 });
 
-app.post('/login', login);
+app.post('/login', catchAsync(loginAsync));
+
 app.get('/logout', (req: Request, res: Response) => {
   req.session.destroy(() => {
     console.log('session destroyed');
@@ -170,12 +213,18 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-app.get('/users', getUsers);
-app.post('/users', createUser);
+app.use(requireAuthentication);
 
-app.get('/users/:id', authenticated, getUserById);
+app.get('/users', getUsers);
+app.post('/users', catchAsync(createUser));
+app.get('/users/:id', getUserById);
 app.patch('/users/:id', updateUser);
 app.delete('/users/:id', deleteUser);
+
+app.get('/reminders', catchAsync(getReminders));
+app.post('/reminders', catchAsync(createReminder));
+
+app.use(noHtmlErrors);
 
 app.listen(PORT, () => {
   console.log(`App running on port: ${PORT}`);

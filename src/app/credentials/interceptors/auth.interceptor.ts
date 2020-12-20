@@ -1,6 +1,16 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {
+  HttpBackend,
+  HttpClient,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {CookieService} from 'ngx-cookie-service';
+import {catchError, map, switchMap} from 'rxjs/operators';
 
 const excludes = [
   '/signup',
@@ -10,57 +20,64 @@ const excludes = [
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private httpNoIntercept: HttpClient;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private httpBackend: HttpBackend,
+              private cookieService: CookieService) {
+    this.httpNoIntercept = new HttpClient(httpBackend);
   }
 
-  get csrfToken(): string {
-    // private http: HttpClient
-    // if (!!document.cookie) {
+  private static authenticateAndHandle(request: HttpRequest<unknown>, next: HttpHandler, token: string) {
+    const req = request.clone({
+      setHeaders: {
+        'X-XSRF-TOKEN': token,
+      },
+      withCredentials: true, // send the XSRF-TOKEN + sid cookies too
+    });
 
-    // fetch('http://localhost:8080/csrf', { mode: 'no-cors' })
-    //   .then((res) => res.headers.forEach((k,v) => console.log({k,v})));
-    this.http.get('http://localhost:8080/csrf', {
-      observe: 'response', // access response headers
-      withCredentials: true,
-      headers: {
-      //   'Access-Control-Allow-Origin': '*',
-      //   'Access-Control-Allow-Headers': 'Set-Cookie',
-      //   'Access-Control-Request-Headers': 'Set-Cookie',
-      }
-    }).subscribe((res) => {
-      const x = res.headers.get('XSRF-TOKEN');
-      const vals = res.headers.keys();
-      console.log({x});
-      console.log({vals});
-      vals.forEach(v => console.log({v}));
-    }); // Force cookie download for CSRF
-    // }
-    return 'hello';
+    // catchError(err => this.handleError(err))
+    return next.handle(req).pipe(catchError(AuthInterceptor.handleError));
   }
 
-  get token(): string {
-    return localStorage.getItem('token');
+  private static handleError(err: HttpErrorResponse): Observable<HttpEvent<unknown>> {
+    let errMsg: string;
+    if (err?.message) {
+      errMsg = `CAUGHT: ${err.message}`;
+    } else {
+      errMsg = 'Oops, something failed';
+    }
+    return throwError(errMsg);
+  }
+
+  async csrfToken() {
+    const token = this.cookieService.get('XSRF-TOKEN');
+    if (token) {
+      return token;
+    }
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (request.url.endsWith('/csrf')) {
-      return next.handle(request);
+    const token = this.cookieService.get('XSRF-TOKEN');
+    if (token) {
+      console.log('Using existing XSRF token:', token);
+      return AuthInterceptor.authenticateAndHandle(request, next, token);
     }
-    // let exclude: string;
-    // excludes.forEach(pattern => {
-    //   if (request.url.endsWith(pattern)) {
-    //     exclude = request.url;
-    //   }
-    // });
-    // if (exclude) {
-    //   return next.handle(request);
-    // }
 
-    return next.handle(request.clone({
-      setHeaders: {
-        'XSRF-Token': this.csrfToken
-      }
-    }));
+    return this.fetchXsrfToken().pipe(
+      switchMap((token) => {
+        console.log('Fetched new XSRF token:', token);
+        return AuthInterceptor.authenticateAndHandle(request, next, token);
+      })
+    );
+
+  }
+
+  private fetchXsrfToken(): Observable<string> {
+    return this.httpNoIntercept.get<null>('https://api-proxy.reminders.test/csrf', {
+      withCredentials: true,
+    }).pipe(
+      map(() => this.cookieService.get('XSRF-TOKEN'))
+    );
   }
 }

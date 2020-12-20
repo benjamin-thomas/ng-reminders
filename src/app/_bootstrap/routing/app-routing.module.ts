@@ -9,10 +9,8 @@ import {ReminderEditComponent} from '../../reminders/reminder-edit/reminder-edit
 import {LogoutComponent} from '../../credentials/components/logout/logout.component';
 import {BackendSelectComponent} from '../../backend/backend-select/backend-select.component';
 import {BackendSelectedGuard} from '../../backend/backend-selected.guard';
-import {HelloComponent} from '../../hello/hello.component';
 
 const routes: Routes = [
-  {path: 'hello', component: HelloComponent},
   {
     path: '', canActivate: [BackendSelectedGuard, AuthGuard], children: [
       {path: '', component: RemindersListComponent}, // default route

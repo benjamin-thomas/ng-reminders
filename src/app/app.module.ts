@@ -20,8 +20,7 @@ import {BackendSelectComponent} from './backend/backend-select/backend-select.co
 import {BackendStatusComponent} from './backend/backend-status/backend-status.component';
 import '@angular/common/locales/global/fr';
 import {AutoSizeInputModule} from 'ngx-autosize-input';
-import { HelloComponent } from './hello/hello.component';
-import { CookieService } from 'ngx-cookie-service';
+import {CookieService} from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -38,7 +37,6 @@ import { CookieService } from 'ngx-cookie-service';
     LogoutComponent,
     BackendSelectComponent,
     BackendStatusComponent,
-    HelloComponent,
   ],
   imports: [
     BrowserModule,

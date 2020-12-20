@@ -321,6 +321,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
         }
       }, (err: HttpErrorResponse) => {
         console.log(err.error);
+        console.log(err);
         alert('Something went wrong!');
       });
   }

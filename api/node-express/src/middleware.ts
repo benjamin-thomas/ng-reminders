@@ -3,7 +3,7 @@ import {StatusCodes} from 'http-status-codes';
 
 const _401_UNAUTHORIZED = StatusCodes.UNAUTHORIZED;
 
-export const authenticated = (req: Request, res: Response, next: NextFunction) => {
+export const requireAuthentication = (req: Request, res: Response, next: NextFunction) => {
   /*
    If the session cookie has expired, the express-session middleware won't return
    the userId at that point (even though the session may still exists in the database)
@@ -13,7 +13,7 @@ export const authenticated = (req: Request, res: Response, next: NextFunction) =
   if (!validSession) {
     return res
       .status(_401_UNAUTHORIZED)
-      .send();
+      .send('Must login!');
   }
 
   next();

@@ -1,11 +1,11 @@
+/* @name FindAllUsers */
+SELECT * FROM users;
+
 /* @name FindUserById */
 SELECT * FROM users WHERE id = :userId;
 
 /* @name FindUserByEmail */
 SELECT * FROM users WHERE email = :email;
-
-/* @name FindAllUsers */
-SELECT * FROM users;
 
 /* @name InsertUser */
 INSERT INTO users (email, pw_hash) VALUES (:email, :pwHash) RETURNING id;

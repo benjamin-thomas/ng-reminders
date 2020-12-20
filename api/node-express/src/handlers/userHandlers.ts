@@ -1,15 +1,20 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 
-import * as qry from './queries/users.queries';
+import * as qry from '../db/out/users.queries';
 import * as bcrypt from 'bcrypt';
 import {StatusCodes} from 'http-status-codes';
-import {pool} from './queries/db-conn';
+import {pool} from '../db/db-conn';
 
 const _204_NO_CONTENT = StatusCodes.NO_CONTENT;
 
 export const getUsers = async (req: Request, res: Response) => {
   const users = await qry.findAllUsers.run(undefined, pool);
-  res.status(200).json(users);
+
+  try {
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).send('Could not get user');
+  }
 };
 
 export const getUserById = async (req: Request, res: Response) => {
@@ -22,16 +27,28 @@ export const getUserById = async (req: Request, res: Response) => {
   res.status(200).json(user);
 };
 
-const saltRounds = 10; // rounds=10: ~10 hashes/sec on a 2GHz core
-export const createUser = async (req: Request, res: Response) => {
-  const {email, password} = req.body;
+export async function getPwHash(req: Request): Promise<string> {
+  const saltRounds = 10; // rounds=10: ~10 hashes/sec on a 2GHz core
 
-  const pwHash = await bcrypt.hash(password, saltRounds);
+  console.log('Getting password hash...');
+  const {password} = req.body;
 
-  const p: qry.IInsertUserParams = {email, pwHash};
-  const insertResult = await qry.insertUser.run(p, pool);
-  const newUser = insertResult[0];
-  res.status(201).json(`New userID: ${newUser.id}`);
+  return await bcrypt.hash(password, saltRounds);
+}
+
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const pwHash = await getPwHash(req);
+
+    const {email} = req.body;
+    const p: qry.IInsertUserParams = {email, pwHash};
+    const insertResult = await qry.insertUser.run(p, pool);
+    const newUser = insertResult[0];
+    res.status(201).json(`New userID: ${newUser.id}`);
+  } catch (err) {
+    // res.send(500).send('Could not create user!');
+    next(new Error('Could not create user!'));
+  }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -40,7 +57,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
   let pwHash: string | null;
   if (password) {
-    pwHash = await bcrypt.hash(password, saltRounds);
+    pwHash = await getPwHash(req);
   } else {
     pwHash = null;
   }

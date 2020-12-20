@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+ENDPOINT = 'https://api-proxy.reminders.test'.freeze
+
+options = {}
+options[:method] = 'GET'
+options[:path] = '/'
+OptionParser.new do |opts|
+  opts.banner = 'Usage: http [options] *ARGS'
+
+  opts.on('-m VERB', '--method VERB', 'Default: GET') do |val|
+    options[:method] = val
+  end
+
+  opts.on('-p PATH', '--path PATH', 'Default: /') do |val|
+    options[:path] = val
+  end
+end.parse!
+
+def url(path)
+  "#{ENDPOINT}#{path}"
+end
+
+# [METHOD] URL [REQUEST_ITEM [REQUEST_ITEM ...]
+cmd = [
+  'http',
+  '--verify', './nginx_dev/cert.pem',
+  '--session', '~/.session',
+  options.fetch(:method),
+  url(options.fetch(:path)),
+  *ARGV
+]
+
+puts(cmd.join(' '))
+system(*cmd)

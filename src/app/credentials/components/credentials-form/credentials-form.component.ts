@@ -24,6 +24,8 @@ export class CredentialsFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.email.setValue('user1@example.com');
+    this.password.setValue('123');
   }
 
   onSubmit() {
