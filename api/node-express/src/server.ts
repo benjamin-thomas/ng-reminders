@@ -70,11 +70,17 @@ const noHtmlErrors = async (err: ReqError, req: Request, res: Response, next: Ne
 
 if (IS_DEV_ENV) {
   app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log('****** HEADERS ********');
+    console.log('****** HEADERS START ********');
     console.log(req.headers);
+    console.log('****** HEADERS END ********');
 
-    console.log('****** BODY ********');
+    console.log('****** BODY START ********');
     console.log(JSON.stringify(req.body));
+    console.log('****** BODY END ********');
+
+    console.log('****** URL START ********');
+    console.log({url: req.originalUrl});
+    console.log('****** URL END ********');
     next();
   });
 }

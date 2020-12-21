@@ -17,6 +17,8 @@ export class NodeExpressBackend extends Backend {
   }
 
   remindersSortURL(limit: number, offset: number, contentLike: string, isDue: boolean): string {
+    let url = this.remindersURL();
+
     // Handle bad params, this will do for now
     if (limit === null) {
       limit = 1;
@@ -24,14 +26,15 @@ export class NodeExpressBackend extends Backend {
     if (offset === null) {
       offset = 0;
     }
+    const status = 'off for now';
+    console.log({limit, offset, status})
 
-    let url = this.remindersURL()
-      + '?order=due.asc,id.desc'
-      + `&limit=${limit}&offset=${offset}`
-    ;
+    if (isDue) {
+      url += '?is_due'
+    }
 
     if (contentLike) {
-      url += `&content=ilike.${contentLike}`;
+      url += `&q=${contentLike}`;
     }
 
     const now = moment().format('YYYY-MM-DDTHH:mm:ss');

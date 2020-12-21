@@ -9,7 +9,6 @@ import {map} from 'rxjs/operators';
 
 export interface PaginatedRemindersResponse {
   items: Reminder[];
-  total: number;
 }
 
 @Injectable({
@@ -34,29 +33,18 @@ export class ReminderService {
   }
 
   getAll(limit: number, offset: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
-    const url = 'https://api-proxy.reminders.test/reminders?'; // this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
+    const url = this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
 
     return this.http
       .get<Reminder[]>(url, {
         observe: 'response', // access response headers
-        headers: {Prefer: 'count=exact'} // get total (rather than `*`)
       })
       .pipe(
         map((res: HttpResponse<Reminder[]>) => {
           const contentRange = res.headers.get('content-range');
-          /*
-          contentRange: "0-101/*" --> without any specific count headers
-          "content-range" => "0-101/102", --> with header 'Prefer': 'count=exact'
-          "content-range" => "4-5/*", --> without header 'Prefer': 'count=exact'
-          "content-range" => "4-5/102"
-           */
-          const [currSlice, totalStr] = contentRange.split('/');
-          const total = Number(totalStr);
-          console.log({contentRange, currSlice, total});
 
           return {
             items: res.body,
-            total,
           };
         })
       );
