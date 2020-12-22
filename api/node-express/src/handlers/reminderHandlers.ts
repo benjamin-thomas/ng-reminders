@@ -51,34 +51,40 @@ const scope = async (userID: number, _query: string, args?: any): Promise<QueryR
 export const getReminders = async (req: Request, res: Response) => {
   const userID = Number(req.session.userId);
 
-  const isDue = Boolean(req.query.is_due);
+  const isDue = req.query.is_due !== undefined;
   const q = req.query.q as string;
 
-  let qr: QueryResult;
+  let sql = 'SELECT * FROM reminders';
+  const args: any[] = [];
+  const now = new Date();
   if (isDue) {
-    const now = new Date();
-    if (q) {
-      qr = await scope(userID,
-        'SELECT * FROM reminders WHERE due < $1 AND content ILIKE $2 ORDER BY due ASC, id DESC',
-        [now, `%${q}%`]);
-    } else {
-      qr = await scope(userID,
-        'SELECT * FROM reminders WHERE due < $1 ORDER BY due ASC, id DESC',
-        [now]);
-    }
-  } else {
-    if (q) {
-      qr = await scope(userID,
-        'SELECT * FROM reminders WHERE content ILIKE $1 ORDER BY due ASC, id DESC',
-        [`%${q}%`]);
-    } else {
-      qr = await scope(userID, 'SELECT * FROM reminders ORDER BY due ASC, id DESC');
-    }
+    sql += ` WHERE due < $${args.length + 1}`;
+    args.push(now);
   }
+
+  if (q) {
+    if (args.length === 0) {
+      sql += ' WHERE';
+    } else {
+      sql += ' AND';
+    }
+
+    sql += ` content ILIKE $${args.length + 1}`;
+    args.push(`%${q}%`);
+  }
+
+  sql += ' ORDER BY due ASC, id DESC';
+
+  const qr: QueryResult = await scope(userID, sql, args);
 
   return res
     .status(200)
-    .json(qr.rows);
+    .json({
+      rows: qr.rows,
+      zSQL: sql,
+      zSQLArgs: args,
+      zVars: {userID, isDue, q},
+    });
 };
 
 const _201_CREATED = StatusCodes.CREATED;
@@ -94,17 +100,14 @@ const createSchema = Joi.object({
   content: Joi.string()
     .min(3)
     .max(100)
-    .required()
-  ,
+    .required(),
 
   due: Joi.date()
-    .optional()
-  ,
+    .optional(),
 
   done: Joi.boolean()
     .not(Joi.string())
-    .required()
-  ,
+    .required(),
 });
 export const createReminder = async (req: Request, res: Response) => {
   const value = await createSchema.validateAsync(req.body);
