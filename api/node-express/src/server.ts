@@ -14,7 +14,7 @@ import {pool} from './db/db-conn';
 import {loginAsync} from './auth';
 import {createUser, deleteUser, getUserById, getUsers, updateUser} from './handlers/userHandlers';
 import {requireAuthentication} from './middleware';
-import {createReminder, getReminders} from './handlers/reminderHandlers';
+import {createReminder, getReminder, getReminders} from './handlers/reminderHandlers';
 
 declare module 'express-session' {
   // eslint-disable-next-line no-unused-vars
@@ -54,7 +54,7 @@ interface ReqError {
   message: string
 }
 
-const noHtmlErrors = async (err: ReqError, req: Request, res: Response, next: NextFunction) => {
+const noHtmlErrors = async (err: ReqError, req: Request, res: Response) => {
   console.log(err);
   let payload;
   if (IS_DEV_ENV) {
@@ -229,6 +229,7 @@ app.delete('/users/:id', deleteUser);
 
 app.get('/reminders', catchAsync(getReminders));
 app.post('/reminders', catchAsync(createReminder));
+app.get('/reminders/:id', catchAsync(getReminder));
 
 app.use(noHtmlErrors);
 

@@ -46,7 +46,7 @@ export class ReminderService {
 
   get(id: number) {
     return this.http
-      .get<Reminder>(this.backend.reminderURL(id), {headers: ReminderService.singleResourceHeader});
+      .get<Reminder>(this.backend.reminderURL(id));
   }
 
   update(id: number, reminder: Reminder) {

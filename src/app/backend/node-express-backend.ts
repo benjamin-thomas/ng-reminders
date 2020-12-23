@@ -12,7 +12,7 @@ export class NodeExpressBackend extends Backend {
   }
 
   reminderURL(id: number): string {
-    return this.host + '/reminders';
+    return `${this.host}/reminders/${id}`;
   }
 
   remindersSortURL(page: number, perPage: number, contentLike: string, isDue: boolean): string {

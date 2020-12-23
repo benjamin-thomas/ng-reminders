@@ -156,3 +156,14 @@ export const createReminder = async (req: Request, res: Response) => {
     .status(_201_CREATED)
     .end();
 };
+
+export const getReminder = async (req: Request, res: Response) => {
+  const {rows, rowCount} = await scope(Number(req.session.userId),
+    'SELECT * FROM reminders WHERE id = $1 LIMIT 1', [req.params.id]);
+
+  if (rowCount === 0) {
+    return res.status(404).send("None, this shouldn't happen!");
+  }
+
+  res.status(200).send(rows[0]);
+};
