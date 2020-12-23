@@ -41,16 +41,10 @@ export class NodeExpressBackend extends Backend {
     }
 
     if (ids.length === 1) {
-      return this.host + `/reminders?id=eq.${ids[0]}`;
+      throw InvalidInputError;
     }
 
-    const strIds = ids
-      .map(n => `id.eq.${n}`)
-      .join(',');
-
-    // one of a list of values, e.g. ?a=in.(1,2,3)
-    // – also supports commas in quoted strings like ?a=in.("hi,there","yes,you")
-    return this.host + `/reminders?or=(${strIds})`;
+    return this.host + `/reminders?ids=${ids.join(',')}`;
   }
 
 }

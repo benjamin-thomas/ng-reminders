@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Reminder} from '../reminder.model';
 import {Observable} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
@@ -26,12 +26,6 @@ export class ReminderService {
     });
   }
 
-  private static get singleResourceHeader() {
-    return new HttpHeaders({
-      Accept: 'application/vnd.pgrst.object+json', // returns a single item, vs Array
-    });
-  }
-
   getAll(page: number, perPage: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
     const url = this.backend.remindersSortURL(page, perPage, searchContentLike, isDue);
 
@@ -53,12 +47,12 @@ export class ReminderService {
     const rem = {...reminder};
     delete rem.id; // Always ensure I strip away the id field
     return this.http
-      .patch(this.backend.reminderURL(id), rem, {headers: ReminderService.singleResourceHeader});
+      .patch(this.backend.reminderURL(id), rem);
   }
 
   pushBack(id: number, dueString: string) {
     return this.http
-      .patch(this.backend.reminderURL(id), {due: dueString}, {headers: ReminderService.singleResourceHeader});
+      .patch(this.backend.reminderURL(id), {due: dueString});
   }
 
   deleteMany(ids: number[]) {

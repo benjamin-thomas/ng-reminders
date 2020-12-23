@@ -218,3 +218,20 @@ export const deleteReminder = async (req: Request, res: Response) => {
 
   res.status(_204_NO_CONTENT).end();
 };
+
+export const deleteReminders = async (req: Request, res: Response) => {
+  const userID = Number(req.session.userId);
+  const reminderStrIds = req.query.ids as string;
+  const args = reminderStrIds.split(',');
+
+  const inArgs = args.map((_id, n) => `$${n + 1}`).join(', ');
+  const sql = `DELETE FROM reminders WHERE id IN (${inArgs})`;
+
+  await scope(userID, sql, args);
+
+  res.status(_204_NO_CONTENT)
+    .header('Z-DEV-TMP-USER-ID', userID.toString())
+    .header('Z-DEV-TMP-ROW-SQL', sql)
+    .header('Z-DEV-TMP-ROW-ARGS', JSON.stringify(args))
+    .end();
+};
