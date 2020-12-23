@@ -111,6 +111,7 @@ export const getReminders = async (req: Request, res: Response) => {
 };
 
 const _201_CREATED = StatusCodes.CREATED;
+const _204_NO_CONTENT = StatusCodes.NO_CONTENT;
 const _400_BAD_REQUEST = StatusCodes.BAD_REQUEST;
 
 function badRequest(res: Response, msg: string) {
@@ -206,4 +207,14 @@ export const patchReminder = async (req: Request, res: Response) => {
     .header('Z-DEV-TMP-ROW-SQL', sql)
     .header('Z-DEV-TMP-ROW-ARGS', JSON.stringify(args))
     .json(rows[0]);
+};
+
+export const deleteReminder = async (req: Request, res: Response) => {
+  const userID = Number(req.session.userId);
+  const reminderID = Number(req.params.id);
+
+  await scope(userID,
+    'DELETE FROM reminders WHERE id = $1', [reminderID]);
+
+  res.status(_204_NO_CONTENT).end();
 };

@@ -14,7 +14,7 @@ import {pool} from './db/db-conn';
 import {loginAsync} from './auth';
 import {createUser, deleteUser, getUserById, getUsers, updateUser} from './handlers/userHandlers';
 import {requireAuthentication} from './middleware';
-import {createReminder, getReminder, getReminders, patchReminder} from './handlers/reminderHandlers';
+import {createReminder, deleteReminder, getReminder, getReminders, patchReminder} from './handlers/reminderHandlers';
 
 declare module 'express-session' {
   // eslint-disable-next-line no-unused-vars
@@ -231,6 +231,7 @@ app.get('/reminders', catchAsync(getReminders));
 app.post('/reminders', catchAsync(createReminder));
 app.get('/reminders/:id', catchAsync(getReminder));
 app.patch('/reminders/:id', catchAsync(patchReminder));
+app.delete('/reminders/:id', catchAsync(deleteReminder));
 
 app.use(noHtmlErrors);
 
