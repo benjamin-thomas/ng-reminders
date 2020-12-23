@@ -167,3 +167,43 @@ export const getReminder = async (req: Request, res: Response) => {
 
   res.status(200).send(rows[0]);
 };
+
+export const patchReminder = async (req: Request, res: Response) => {
+  const userID = Number(req.session.userId);
+  const reminderID = Number(req.params.id);
+
+  let sql = 'UPDATE reminders SET';
+  const allowedFields = {
+    content: req.body.content,
+    done: req.body.done,
+    due: req.body.due,
+  };
+
+  const args: any[] = [];
+  const allowedKeys = Object.keys(allowedFields);
+  allowedKeys.forEach((allowedKey) => {
+    const allowedInput = req.body[allowedKey];
+    if (!allowedInput) {
+      return; // skipping empty
+    }
+    args.push(allowedInput);
+    sql += ` ${allowedKey} = $${args.length},`;
+  });
+
+  if (args.length === 0) {
+    return res.status(_400_BAD_REQUEST).send('Could not process body');
+  }
+
+  sql = sql.slice(0, -1); // strip trailing comma
+
+  args.push(reminderID);
+  sql += ` WHERE id = $${args.length} RETURNING *`;
+
+  const {rows} = await scope(userID, sql, args);
+
+  res.status(200)
+    .header('Z-DEV-TMP-USER-ID', userID.toString())
+    .header('Z-DEV-TMP-ROW-SQL', sql)
+    .header('Z-DEV-TMP-ROW-ARGS', JSON.stringify(args))
+    .json(rows[0]);
+};
