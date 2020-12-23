@@ -58,46 +58,56 @@ export const getReminders = async (req: Request, res: Response) => {
   const page = Number(req.query.page); // Number OR null
   const perPage = Number(req.query.per_page || 5); // Number OR 3
 
-  let sql = 'SELECT * FROM reminders';
+  let sqlFrag = 'FROM reminders';
   const args: any[] = [];
   const now = new Date();
   if (isDue) {
-    sql += ` WHERE due < $${args.length + 1}`;
+    sqlFrag += ` WHERE due < $${args.length + 1}`;
     args.push(now);
   }
 
   if (q) {
     if (args.length === 0) {
-      sql += ' WHERE';
+      sqlFrag += ' WHERE';
     } else {
-      sql += ' AND';
+      sqlFrag += ' AND';
     }
 
     const qq = q.replace(/\*/g, '%');
-    sql += ` content ILIKE $${args.length + 1}`;
+    sqlFrag += ` content ILIKE $${args.length + 1}`;
     args.push(qq);
   }
 
-  sql += ' ORDER BY due ASC, id DESC';
+  const countSQL = 'SELECT COUNT(*) ' + sqlFrag;
+  const countArgs = args.slice();
+
+  sqlFrag += ' ORDER BY due ASC, id DESC';
 
   // Test pagination, keeping for ref
   // sql = 'SELECT * FROM generate_series(1,100)';
 
   // Always paginate on first page, at least
-  sql += ` LIMIT $${args.length + 1}`;
+  sqlFrag += ` LIMIT $${args.length + 1}`;
   args.push(perPage);
 
   if (page) {
     const offset = (page - 1) * perPage;
-    sql += ` OFFSET $${args.length + 1}`;
+    sqlFrag += ` OFFSET $${args.length + 1}`;
     args.push(offset);
   }
 
-  const qr: QueryResult = await scope(userID, sql, args);
+  const listSQL = 'SELECT * ' + sqlFrag;
+  const qr: QueryResult = await scope(userID, listSQL, args);
+
+  const qrTotal = await scope(userID, countSQL, countArgs);
+  const countTotal = qrTotal.rows[0].count;
 
   res
+    .header('Z-DEV-TMP-CNT-SQL-ARGS', countArgs)
+    .header('Z-DEV-TMP-CNT-SQL', countSQL)
+    .header('Z-DEV-TMP-CNT-SQL-TOTAL', countTotal)
     .header('Z-DEV-TMP-ROW-COUNT', qr.rowCount.toString())
-    .header('Z-DEV-TMP-ROW-SQL', sql)
+    .header('Z-DEV-TMP-ROW-SQL', listSQL)
     .header('Z-DEV-TMP-ROW-SQL-ARGS', args)
     .header('Z-DEV-TMP-ROW-VARS', JSON.stringify({userID, isDue, q, page, perPage}))
   ;
@@ -106,7 +116,7 @@ export const getReminders = async (req: Request, res: Response) => {
     .status(200)
     .json({
       items: qr.rows,
-      total: qr.rowCount,
+      total: countTotal,
     });
 };
 
