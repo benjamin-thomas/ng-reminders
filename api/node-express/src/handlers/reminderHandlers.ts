@@ -49,10 +49,14 @@ const scope = async (userID: number, _query: string, args?: any): Promise<QueryR
 };
 
 export const getReminders = async (req: Request, res: Response) => {
-  const userID = Number(req.session.userId);
+  const userID = Number(req.session.userId); // null OR Number, incoherent with Chrome's console
 
-  const isDue = req.query.is_due !== undefined;
-  const q = req.query.q as string;
+  const isDue = req.query.is_due !== undefined; // always bool
+  const q = req.query.q as string; // would be undefined otherwise
+  // const q = (req.query.q || null) as string; // null or would be 'undefined' otherwise
+
+  const page = Number(req.query.page); // Number OR null
+  const perPage = Number(req.query.per_page || 5); // Number OR 3
 
   let sql = 'SELECT * FROM reminders';
   const args: any[] = [];
@@ -69,21 +73,40 @@ export const getReminders = async (req: Request, res: Response) => {
       sql += ' AND';
     }
 
+    const qq = q.replace(/\*/g, '%');
     sql += ` content ILIKE $${args.length + 1}`;
-    args.push(`%${q}%`);
+    args.push(qq);
   }
 
   sql += ' ORDER BY due ASC, id DESC';
 
+  // Test pagination, keeping for ref
+  // sql = 'SELECT * FROM generate_series(1,100)';
+
+  // Always paginate on first page, at least
+  sql += ` LIMIT $${args.length + 1}`;
+  args.push(perPage);
+
+  if (page) {
+    const offset = (page - 1) * perPage;
+    sql += ` OFFSET $${args.length + 1}`;
+    args.push(offset);
+  }
+
   const qr: QueryResult = await scope(userID, sql, args);
+
+  res
+    .header('Z-DEV-TMP-ROW-COUNT', qr.rowCount.toString())
+    .header('Z-DEV-TMP-ROW-SQL', sql)
+    .header('Z-DEV-TMP-ROW-SQL-ARGS', args)
+    .header('Z-DEV-TMP-ROW-VARS', JSON.stringify({userID, isDue, q, page, perPage}))
+  ;
 
   return res
     .status(200)
     .json({
-      rows: qr.rows,
-      zSQL: sql,
-      zSQLArgs: args,
-      zVars: {userID, isDue, q},
+      items: qr.rows,
+      total: qr.rowCount,
     });
 };
 

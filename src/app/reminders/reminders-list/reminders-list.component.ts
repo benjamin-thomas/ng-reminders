@@ -31,10 +31,13 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   isDevMode = isDevMode();
   isDue = true;
   pushBackFromNow = true;
-  private currOffset = 0;
+
   private selectChangeSub: Subscription;
   private previousSelectedIdx: number;
-  private fetchLimit = 10;
+
+  private currPage = 1;
+  private perPage = 10;
+
   private autoRefreshInSeconds = RemindersListComponent.autoRefreshDefault;
   private inactiveSub: Subscription;
 
@@ -207,7 +210,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
   }
 
   doSearch() {
-    this.currOffset = 0;
+    this.currPage = 1;
     this.reQuery();
   }
 
@@ -256,7 +259,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
 
   fetchMoreReminders() {
     const previousReminders = this.reminders;
-    this.currOffset += this.fetchLimit;
+    this.currPage += 1;
     this.fetchReminders(() => {
       const newReminders = this.reminders;
       this.reminders = previousReminders;
@@ -306,7 +309,7 @@ export class RemindersListComponent implements OnInit, OnDestroy {
     if (this.searchTerm && !this.searchTerm.includes('*')) {
       searchContentLike = `*${this.searchTerm}*`;
     }
-    this.reminderService.getAll(this.fetchLimit, this.currOffset, searchContentLike, this.isDue)
+    this.reminderService.getAll(this.currPage, this.perPage, searchContentLike, this.isDue)
       .subscribe((resp: PaginatedRemindersResponse) => {
         const data = resp.items;
         this.total = resp.total;

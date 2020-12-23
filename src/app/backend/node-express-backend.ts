@@ -1,5 +1,4 @@
 import {Backend} from './backend.model';
-import * as moment from 'moment';
 
 const InvalidInputError = new Error('Invalid input!');
 
@@ -16,30 +15,17 @@ export class NodeExpressBackend extends Backend {
     return this.host + '/reminders';
   }
 
-  remindersSortURL(limit: number, offset: number, contentLike: string, isDue: boolean): string {
+  remindersSortURL(page: number, perPage: number, contentLike: string, isDue: boolean): string {
     let url = this.remindersURL();
 
-    // Handle bad params, this will do for now
-    if (limit === null) {
-      limit = 1;
-    }
-    if (offset === null) {
-      offset = 0;
-    }
-    const status = 'off for now';
-    console.log({limit, offset, status})
+    url += `?page=${page}&per_page=${perPage}`;
 
     if (isDue) {
-      url += '?is_due'
+      url += '&is_due'
     }
 
     if (contentLike) {
       url += `&q=${contentLike}`;
-    }
-
-    const now = moment().format('YYYY-MM-DDTHH:mm:ss');
-    if (isDue === true) {
-      url += `&due=lt.${now}`; // lt.now works but dependent on server time so not really a great option
     }
 
     return url;

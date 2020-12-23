@@ -4,13 +4,13 @@ interface BackendURLs {
   reminderURL: (id: number) => string;
   remindersURL: (ids?: number[]) => string;
 
-  remindersSortURL: (limit: number,
-                     offset: number,
+  remindersSortURL: (page: number,
+                     perPage: number,
                      contentLike: string,
                      isDue: boolean) => string;
 }
 
-export abstract class Backend implements BackendURLs {
+export abstract class Backend implements BackendURLs{
   protected host: string;
 
   constructor(host: string) {
@@ -25,8 +25,8 @@ export abstract class Backend implements BackendURLs {
 
   abstract remindersURL(ids?: number[]): string;
 
-  abstract remindersSortURL(limit: number,
-                            offset: number,
+  abstract remindersSortURL(page: number,
+                            perPage: number,
                             contentLike: string,
                             isDue: boolean): string;
 }

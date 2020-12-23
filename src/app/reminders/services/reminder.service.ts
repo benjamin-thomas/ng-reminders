@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Reminder} from '../reminder.model';
 import {Observable} from 'rxjs';
 import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
 import {Backend} from '../../backend/backend.model';
-import {map} from 'rxjs/operators';
 
 
 export interface PaginatedRemindersResponse {
+  total: number;
   items: Reminder[];
 }
 
@@ -32,22 +32,11 @@ export class ReminderService {
     });
   }
 
-  getAll(limit: number, offset: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
-    const url = this.backend.remindersSortURL(limit, offset, searchContentLike, isDue);
+  getAll(page: number, perPage: number, searchContentLike: string, isDue: boolean): Observable<PaginatedRemindersResponse> {
+    const url = this.backend.remindersSortURL(page, perPage, searchContentLike, isDue);
 
     return this.http
-      .get<Reminder[]>(url, {
-        observe: 'response', // access response headers
-      })
-      .pipe(
-        map((res: HttpResponse<Reminder[]>) => {
-          const contentRange = res.headers.get('content-range');
-
-          return {
-            items: res.body,
-          };
-        })
-      );
+      .get<PaginatedRemindersResponse>(url);
   }
 
   create(reminder: Reminder) {
@@ -69,7 +58,7 @@ export class ReminderService {
 
   pushBack(id: number, dueString: string) {
     return this.http
-      .patch(this.backend.reminderURL(id), { due: dueString}, {headers: ReminderService.singleResourceHeader});
+      .patch(this.backend.reminderURL(id), {due: dueString}, {headers: ReminderService.singleResourceHeader});
   }
 
   deleteMany(ids: number[]) {
