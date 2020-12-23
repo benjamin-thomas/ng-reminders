@@ -40,10 +40,6 @@ export class NodeExpressBackend extends Backend {
       throw InvalidInputError;
     }
 
-    if (ids.length === 1) {
-      throw InvalidInputError;
-    }
-
     return this.host + `/reminders?ids=${ids.join(',')}`;
   }
 

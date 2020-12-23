@@ -1,5 +1,5 @@
 {
   "integrationFolder": "cypress/integration",
   "supportFile": "cypress/support/index.ts",
-  "baseUrl": "http://ng.reminders.test:4200"
+  "baseUrl": "https://ng.reminders.test:4200"
 }

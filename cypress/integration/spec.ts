@@ -1,4 +1,8 @@
-// See: ./api/postgrest/manage/dev/create_test_user
+/*
+ See:
+   - ./api/postgrest/manage/dev/create_test_user
+   - ./api/node-express/manage/dev/create_test_user
+ */
 
 const email = 'testuser@example.com';
 const password = '123';
@@ -25,13 +29,14 @@ function login() {
 describe('Authentication', () => {
 
   beforeEach(() => {
-    cy.exec('./api/postgrest/manage/dev/create_test_user');
+    // cy.exec('./api/postgrest/manage/dev/create_test_user');
+    cy.exec('./api/node-express/manage/dev/create_test_user');
   });
 
   it('requires selecting a backend first', () => {
     cy.visit('/');
     cy.contains('Select a backend!');
-    cy.get('select').select('PostgREST');
+    cy.get('select').select('Node/Express');
     cy.get('button').click();
 
     // intelliJ shows weird error with `should` alias

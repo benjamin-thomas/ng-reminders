@@ -22,7 +22,7 @@ declare module 'express-session' {
        So the best strategy I can think of for now is to wrap the user query inside a
        transaction, and use `SET LOCAL` which requires a transaction block.
  */
-const scope = async (userID: number, _query: string, args?: any): Promise<QueryResult> => {
+export const scope = async (userID: number, _query: string, args?: any): Promise<QueryResult> => {
   if (!userID) {
     // eslint-disable-next-line max-len
     throw new Error('This should never happen!!'); // At least in prod. Guards against app crash in dev.

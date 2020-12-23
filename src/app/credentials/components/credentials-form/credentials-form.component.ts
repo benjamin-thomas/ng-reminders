@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
 @Component({
@@ -6,7 +6,7 @@ import {FormControl, FormGroup} from '@angular/forms';
   templateUrl: './credentials-form.component.html',
   styleUrls: ['./credentials-form.component.scss']
 })
-export class CredentialsFormComponent implements OnInit {
+export class CredentialsFormComponent {
   @Input() title: string;
   @Input() showPasswordReset = false;
   @Input() buttonTitle: string;
@@ -21,11 +21,6 @@ export class CredentialsFormComponent implements OnInit {
   });
 
   constructor() {
-  }
-
-  ngOnInit(): void {
-    this.email.setValue('user1@example.com');
-    this.password.setValue('123');
   }
 
   onSubmit() {

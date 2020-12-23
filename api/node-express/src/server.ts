@@ -22,6 +22,7 @@ import {
   getReminders,
   patchReminder,
 } from './handlers/reminderHandlers';
+import {cypressTestSetup} from './handlers/testHandlers';
 
 declare module 'express-session' {
   // eslint-disable-next-line no-unused-vars
@@ -74,7 +75,6 @@ const noHtmlErrors = async (err: ReqError, req: Request, res: Response) => {
     .json(payload);
 };
 
-
 if (IS_DEV_ENV) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     console.log('****** HEADERS START ********');
@@ -111,6 +111,7 @@ app.use(helmet());
 // Available formats: dev, common, short, combined, tiny.
 let morganFormat: string;
 if (IS_DEV_ENV) {
+  app.post('/test-setup', catchAsync(cypressTestSetup));
   morganFormat = 'dev';
 } else {
   morganFormat = 'short';
