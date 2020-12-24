@@ -14,5 +14,5 @@ func mustEnv(key string) string {
 }
 
 func isDev() bool {
-	return appEnv == "development"
+	return AppEnv == "development"
 }

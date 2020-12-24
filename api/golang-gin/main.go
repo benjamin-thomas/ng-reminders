@@ -5,12 +5,12 @@ import (
 	"log"
 )
 
-var appEnv string
-var origin string
+var AppEnv string
+var Origin string
 
 func init() {
-	appEnv = mustEnv("APP_ENV")
-	origin = mustEnv("ORIGIN")
+	AppEnv = mustEnv("APP_ENV")
+	Origin = mustEnv("ORIGIN")
 }
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 		r.Use(debugJsonBody)
 	}
 
-	log.Printf("[INIT] APP_ENV=%s, ORIGIN=%s\n", appEnv, origin)
+	log.Printf("[INIT] APP_ENV=%s, ORIGIN=%s\n", AppEnv, Origin)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
