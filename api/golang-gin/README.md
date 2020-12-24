@@ -22,7 +22,7 @@ Then follow the given instructions.
 - `curl 127.0.0.6:8080/ping`
 - `curl api.reminders.test:8080/ping`
 
-#### Reverse proxy
+#### Reverse proxy (update /etc/hosts accordingly)
 
 - `curl --insecure https://127.0.0.7/ping`
 - `curl --cacert ./nginx_dev/cert.pem https://api-proxy.reminders.test/ping`
@@ -30,3 +30,7 @@ Then follow the given instructions.
 #### Access the web app's logger
 
 `docker logs golang-gin_web_1 -f`
+
+#### Use this httpie helper (handles TLS + session, etc.)
+
+`./manage/dev/http -p /ping`
