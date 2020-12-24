@@ -5,7 +5,6 @@ services:
     build: .
     command: rerun
     tty: true # Gin's logger won't print color otherwise
-#    init: true # fixes control-c not working
     ports:
       - "127.0.0.6:8080:8080"
     volumes:
@@ -18,6 +17,7 @@ services:
     environment:
       - PORT=8080
       - APP_ENV=development
+      - ORIGIN=https://ng.reminders.test:4200
       - ${DATABASE_URL}:$DATABASE_URL_DEVELOPMENT
 
   nginx_proxy:
