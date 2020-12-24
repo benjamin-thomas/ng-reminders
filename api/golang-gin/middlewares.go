@@ -13,6 +13,7 @@ import (
 const ColorReset = "\033[1;m"
 const Purple = "\033[1;35m"
 const Yellow = "\033[1;33m"
+const Grey = "\033[38;5;245m"
 
 func debugHeaders(c *gin.Context) {
 	var headers []string
@@ -32,6 +33,12 @@ func debugJsonBody(c *gin.Context) {
 	jBytes, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		panic(err)
+	}
+	if len(jBytes) == 0 {
+		fmt.Println(Grey, "  BODY IS EMPTY", ColorReset)
+
+		c.Next()
+		return
 	}
 	var j map[string]interface{}
 	err = json.Unmarshal(jBytes, &j)
