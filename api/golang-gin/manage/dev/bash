@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# To run nmp and other stuff
+
+set -x
+exec docker-compose run --rm web /bin/bash

@@ -1,9 +1,32 @@
 ## Setup
 
-NOTE: I do not use `GOPATH` anymore, so must be provided if downloading a binary.
+1. Setup env vars
 
-`GOPATH=~/code/go/ go get -v github.com/ivpusic/rerun`
+`./manage/dev/init/*`
 
-Then launch the dev server:
+Then follow the given instructions.
 
-`rerun`
+2. Setup dev reverse proxy (handles TLS)
+
+- `cd ./nginx_dev`
+- `./create_fake_certs`
+
+3. Launch the nginx reverse proxy
+
+`./manage/dev/run`
+
+4. Access the app's containers
+
+#### Web container
+
+- `curl 127.0.0.6:8080/ping`
+- `curl api.reminders.test:8080/ping`
+
+#### Reverse proxy
+
+- `curl --insecure https://127.0.0.7/ping`
+- `curl --cacert ./nginx_dev/cert.pem https://api-proxy.reminders.test/ping`
+
+#### Access the web app's logger
+
+`docker logs golang-gin_web_1 -f`

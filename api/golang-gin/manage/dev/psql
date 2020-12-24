@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if [[ $1 == "postgres" ]];then
+  echo "Connecting as postgres user..."
+  docker-compose run --rm psql -c "PGPASSWORD=\$POSTGRES_PASSWORD psql -d \$DEV_DBNAME"
+  exit 0
+fi
+
+echo "Connecting as webapp user..."
+docker-compose run --rm psql -c "psql \$DATABASE_URL_DEVELOPMENT"

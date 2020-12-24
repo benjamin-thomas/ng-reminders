@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ $(basename $(pwd)) != 'nginx_dev' ]; then
+  echo 'Must run in script dir!'
+  exit 1
+fi
+
+# https://letsencrypt.org/docs/certificates-for-localhost/
+# openssl req -x509 -out localhost.crt -keyout localhost.key \
+#   -newkey rsa:2048 -nodes -sha256 \
+#   -subj '/CN=api.reminders.test' -extensions EXT -config <( \
+#    printf "[dn]\nCN=api.reminders.test\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:api.reminders.test\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+
+# Works with Chrome (validate once) + curl + httpie
+openssl req \
+  -subj /CN=api-proxy.reminders.test \
+  -x509 -newkey rsa:4096 -nodes \
+  -keyout key.pem \
+  -out cert.pem \
+  -days 365
+
+# Works with Chrome (validate once) + curl + but NOT httpie
+# From letsencrypt snippet above, keeping for ref as it may be required later
+# openssl req \
+  # -config ./req2.ini \
+  # -x509 -newkey rsa:4096 -nodes \
+  # -keyout key.pem \
+  # -out cert.pem \
+  # -days 365

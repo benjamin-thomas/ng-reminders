@@ -8,7 +8,7 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	r := gin.Default()
-	log.Println("Initializing gin3...")
+	log.Println("Initializing gin4...")
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

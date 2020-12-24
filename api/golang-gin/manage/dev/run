@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -x
+exec docker-compose run --rm --service-ports nginx_proxy
