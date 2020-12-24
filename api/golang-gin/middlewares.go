@@ -15,6 +15,11 @@ const Purple = "\033[1;35m"
 const Yellow = "\033[1;33m"
 const Grey = "\033[38;5;245m"
 
+func debugRequestURL(c *gin.Context) {
+	fmt.Print(Purple, "[DEBUG REQUEST URL]", ColorReset, "\n")
+	fmt.Println(Grey, "  ", c.Request.URL, ColorReset)
+}
+
 func debugHeaders(c *gin.Context) {
 	var headers []string
 	fmt.Print(Yellow, "[DEBUG HEADERS]", ColorReset, "\n")

@@ -18,6 +18,7 @@ func main() {
 	r := gin.Default()
 
 	if isDev() {
+		r.Use(debugRequestURL)
 		r.Use(debugHeaders)
 		r.Use(debugJsonBody)
 	}
