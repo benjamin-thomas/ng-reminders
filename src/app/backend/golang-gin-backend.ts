@@ -2,13 +2,13 @@ import {Backend} from './backend.model';
 
 const InvalidInputError = new Error('Invalid input!');
 
-export class NodeExpressBackend extends Backend {
+export class GolangGinBackend extends Backend {
   csrfURL(): string {
     return this.host + '/csrf';
   }
 
   signupURL(): string {
-    return this.host + '/users';
+    return this.host + '/register';
   }
 
   loginURL(): string {
@@ -25,7 +25,7 @@ export class NodeExpressBackend extends Backend {
     url += `?page=${page}&per_page=${perPage}`;
 
     if (isDue) {
-      url += '&is_due'
+      url += '&is_due=1'
     }
 
     if (contentLike) {

@@ -11,21 +11,25 @@ import {
 import {Observable, throwError} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
 import {catchError, map, switchMap} from 'rxjs/operators';
-
-const excludes = [
-  '/signup',
-  '/login',
-  '/select-backend',
-];
+import {BackendSelectService} from '../../backend/backend-select/service/backend-select.service';
+import {Backend} from '../../backend/backend.model';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private httpNoIntercept: HttpClient;
+  private backend: Backend;
 
   constructor(private http: HttpClient,
               private httpBackend: HttpBackend,
-              private cookieService: CookieService) {
+              private cookieService: CookieService,
+              private backendSelectService: BackendSelectService) {
+
     this.httpNoIntercept = new HttpClient(httpBackend);
+
+    // I don't think I need to unsubscribe here (no destroy logic)
+    this.backendSelectService.emitter.subscribe(([backend]) => {
+      this.backend = backend;
+    });
   }
 
   private static authenticateAndHandle(request: HttpRequest<unknown>, next: HttpHandler, token: string) {
@@ -60,13 +64,13 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.cookieService.get('XSRF-TOKEN');
     if (token) {
-      console.log('Using existing XSRF token:', token);
+      console.log('Using existing XSRF token:', token);
       return AuthInterceptor.authenticateAndHandle(request, next, token);
     }
 
     return this.fetchXsrfToken().pipe(
       switchMap((token) => {
-        console.log('Fetched new XSRF token:', token);
+        console.log('Fetched new XSRF token:', token);
         return AuthInterceptor.authenticateAndHandle(request, next, token);
       })
     );
@@ -74,7 +78,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private fetchXsrfToken(): Observable<string> {
-    return this.httpNoIntercept.get<null>('https://api-proxy.reminders.test/csrf', {
+    return this.httpNoIntercept.get<null>(this.backend.csrfURL(), {
       withCredentials: true,
     }).pipe(
       map(() => this.cookieService.get('XSRF-TOKEN'))

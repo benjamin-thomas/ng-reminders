@@ -21,6 +21,8 @@ export class CredentialsFormComponent {
   });
 
   constructor() {
+    this.email.setValue('user@example.com')
+    this.password.setValue('123')
   }
 
   onSubmit() {

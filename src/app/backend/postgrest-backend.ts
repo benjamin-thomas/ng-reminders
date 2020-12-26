@@ -4,7 +4,12 @@ import * as moment from 'moment';
 const InvalidInputError = new Error('Invalid input!');
 
 export class PostgrestBackend extends Backend {
+
   static InvalidInputError = InvalidInputError;
+
+  csrfURL(): string {
+    return this.host;
+  }
 
   loginURL() {
     return this.host + '/rpc/login';

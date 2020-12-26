@@ -54,7 +54,7 @@ export class AuthService {
         },
         (err: HttpErrorResponse) => {
           console.log('Something failed!', err.error);
-          alert(err.error.message);
+          alert(err.error?.message);
         });
   }
 }

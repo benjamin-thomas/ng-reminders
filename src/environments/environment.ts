@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiHost: 'https://api-proxy.reminders.test',
+  apiHost: 'https://api-proxy-golang-gin.reminders.test',
 };
 
 /*

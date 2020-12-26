@@ -1,4 +1,5 @@
 interface BackendURLs {
+  csrfURL: () => string;
   loginURL: () => string;
   signupURL: () => string;
   reminderURL: (id: number) => string;
@@ -16,6 +17,8 @@ export abstract class Backend implements BackendURLs{
   constructor(host: string) {
     this.host = host;
   }
+
+  abstract csrfURL(): string;
 
   abstract loginURL(): string;
 
