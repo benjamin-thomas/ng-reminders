@@ -3,10 +3,11 @@ services:
 
   web:
     build: .
-    command: rerun
+    # Not sure why I need to double the dollar sign
+    command: /bin/bash -c 'DATABASE_URL=$$DATABASE_URL_DEVELOPMENT?sslmode=disable rerun'
     tty: true # Gin's logger won't print color otherwise
     ports:
-      - "127.0.0.6:8080:8080"
+      - "127.1.3.1:8080:8080" # See: /etc/hosts -> api-golang-gin.reminders.test
     volumes:
       - .:/go/src/app
     depends_on:
@@ -17,13 +18,13 @@ services:
     environment:
       - PORT=8080
       - APP_ENV=development
-      - ORIGIN=https://ng.reminders.test:4200
-      - ${DATABASE_URL}:$DATABASE_URL_DEVELOPMENT
+      - DOMAIN=reminders.test
+      - ORIGIN=https://ng.reminders.test
 
   nginx_proxy:
     image: nginx
     ports:
-      - "127.0.0.7:443:443"
+      - "127.1.3.2:443:443"  # See: /etc/hosts -> api-proxy-golang-gin.reminders.test
     depends_on:
       - web
     volumes:
@@ -54,7 +55,7 @@ services:
     # https://hub.docker.com/_/postgres
     image: postgres:13
     ports:
-      - "127.0.0.8:5432:5432"
+      - "127.1.3.3:5432:5432" # pg-golang-gin.reminders.test
     restart: always
     env_file:
       - ~/.env/ng-reminders/golang-gin/db.env
