@@ -1,1 +1,12 @@
 https://loizenai.com/springboot-angular-10-postgresql-crud-restapi-example/
+
+## To read/to try/for ref
+
+- ~/code/explore/testing-web2
+- https://github.com/benjamin-thomas/spring_address_book/blob/master/src/main/java/invalid/bt/spring_address_book/repositories/CityRepository.java
+- https://blog.j-labs.pl/quick-introduction-to-querydsl
+- https://github.com/streamx-co/FluentJPA
+- https://www.baeldung.com/intro-to-querydsl
+- http://iciql.com/
+- https://github.com/querydsl/querydsl
+- http://www.jinq.org/
