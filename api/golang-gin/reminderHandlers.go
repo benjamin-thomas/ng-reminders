@@ -34,26 +34,30 @@ func getReminders(c *gin.Context) {
 	}
 
 	isDue := c.Query("is_due") == "1"
-	query := "SELECT id, content, done, due FROM reminders"
+	queryConditions := " FROM reminders"
 	args := make([]interface{}, 0)
 
 	if isDue {
 		args = append(args, time.Now())
-		query += fmt.Sprintf(" WHERE due < $%d", len(args))
+		queryConditions += fmt.Sprintf(" WHERE due < $%d", len(args))
 	}
 
 	q := c.Query("q")
 	if q != "" {
 		if len(args) == 0 {
-			query += " WHERE"
+			queryConditions += " WHERE"
 		} else {
-			query += " AND"
+			queryConditions += " AND"
 		}
 		qq := strings.ReplaceAll(q, "*", "%")
 		args = append(args, qq)
-		query += fmt.Sprintf(" content ILIKE $%d", len(args))
+		queryConditions += fmt.Sprintf(" content ILIKE $%d", len(args))
 	}
-	query += " ORDER BY due ASC, id DESC"
+
+	cntArgs := args
+	cntSQL := "SELECT COUNT(*)" + queryConditions
+
+	queryConditions += " ORDER BY due ASC, id DESC"
 
 	perPage := c.Query("per_page")
 	if perPage == "" {
@@ -61,7 +65,7 @@ func getReminders(c *gin.Context) {
 	}
 	// This will paginate on first page, at least
 	args = append(args, perPage)
-	query += fmt.Sprintf(" LIMIT $%d", len(args))
+	queryConditions += fmt.Sprintf(" LIMIT $%d", len(args))
 
 	page := c.Query("page")
 	if page != "" {
@@ -73,13 +77,24 @@ func getReminders(c *gin.Context) {
 
 		offset := (pg - 1) * ppg
 		args = append(args, offset)
-		query += fmt.Sprintf(" OFFSET $%d", len(args))
+		queryConditions += fmt.Sprintf(" OFFSET $%d", len(args))
 	}
-	userScopeQuery(scanReminders, c, query, args...)
+	listSQL := "SELECT id, content, done, due" + queryConditions
+	userScopeQuery(scanReminders, c, listSQL, args...)
 
-	c.Header("Z-DEV-TMP-ROW-SQL", query)
+	var total int
+	mustUserScopeQueryRow(func(row *sql.Row) error {
+		return row.Scan(&total)
+	}, c, cntSQL, cntArgs...)
+
+	c.Header("Z-DEV-TMP-ROW-SQL", queryConditions)
 	c.Header("Z-DEV-TMP-ROW-SQL-ARGS", fmt.Sprint(args))
-	c.JSON(200, gin.H{"items": reminders})
+	c.Header("Z-DEV-TMP-ROW-CNT-SQL", cntSQL)
+	c.Header("Z-DEV-TMP-ROW-CNT-SQL-ARGS", fmt.Sprint(cntArgs))
+	c.JSON(200, gin.H{
+		"items": reminders,
+		"total": total,
+	})
 }
 
 func getReminder(c *gin.Context) {
