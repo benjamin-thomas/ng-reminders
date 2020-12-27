@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -53,8 +54,31 @@ func getReminders(c *gin.Context) {
 		query += fmt.Sprintf(" content ILIKE $%d", len(args))
 	}
 	query += " ORDER BY due ASC, id DESC"
+
+	perPage := c.Query("per_page")
+	if perPage == "" {
+		perPage = "5"
+	}
+	// This will paginate on first page, at least
+	args = append(args, perPage)
+	query += fmt.Sprintf(" LIMIT $%d", len(args))
+
+	page := c.Query("page")
+	if page != "" {
+		pg, pgErr := strconv.Atoi(page)
+		panicIf(pgErr)
+
+		ppg, ppgErr := strconv.Atoi(perPage)
+		panicIf(ppgErr)
+
+		offset := (pg - 1) * ppg
+		args = append(args, offset)
+		query += fmt.Sprintf(" OFFSET $%d", len(args))
+	}
 	userScopeQuery(scanReminders, c, query, args...)
 
+	c.Header("Z-DEV-TMP-ROW-SQL", query)
+	c.Header("Z-DEV-TMP-ROW-SQL-ARGS", fmt.Sprint(args))
 	c.JSON(200, gin.H{"items": reminders})
 }
 

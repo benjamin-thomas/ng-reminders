@@ -105,13 +105,16 @@
         (mouseenter)="pushBackOptions.style.visibility = 'visible'"
         (mouseleave)="pushBackOptions.style.visibility = 'hidden'"
       >
-        {{r.content}}
+        {{r.content.split(";")[0]}}
 
         <span style="float:right;visibility: hidden" #pushBackOptions>
           <button class="btn btn-sm" (click)="pushBack(r, 60*10)">{{ pushBackFromNowChar() }}10m</button>
           <button class="btn btn-sm" (click)="pushBack(r, 60*60)">{{ pushBackFromNowChar() }}1h</button>
           <button class="btn btn-sm" (click)="pushBack(r, 60*60*4)">{{ pushBackFromNowChar() }}4h</button>
           <button class="btn btn-sm" (click)="pushBack(r, 60*60*24)">{{ pushBackFromNowChar() }}24h</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60*24*2)">{{ pushBackFromNowChar() }}48h</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60*24*3)">{{ pushBackFromNowChar() }}72h</button>
+          <button class="btn btn-sm" (click)="pushBack(r, 60*60*24*7)">{{ pushBackFromNowChar() }}1w</button>
         </span>
       </td>
       <td
