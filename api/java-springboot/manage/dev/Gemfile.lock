@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    awesome_print (1.8.0)
+    colored (1.2)
+    dotenv (2.7.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  colored
+  dotenv
+
+BUNDLED WITH
+   2.1.4

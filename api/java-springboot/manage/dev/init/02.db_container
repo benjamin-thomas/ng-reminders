@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'dotenv'
+rescue LoadError
+  abort('apt-get install ruby-dotenv')
+end
+
+#noinspection RubyResolve
+Dotenv.load('~/.env/ng-reminders/java-springboot/db.env')
+
+def psql(cmd, dbname = nil)
+  args = [
+    'docker-compose', 'exec',
+    '--env', 'PGUSER=postgres',
+    '--env', "PGPASSWORD=#{ENV['POSTGRES_PASSWORD']}",
+    'db',
+    'psql', '--echo-all', '-c', cmd #, --echo-queries, --echo-errors doesn't give better output
+  ]
+  args += ['-d', dbname] if dbname
+  system(*args) || fail("Could not exec: #{args}")
+end
+
+# Remove previous
+system('docker-compose', 'down')
+system('docker volume rm java-springboot_db-data')
+
+# Creates java-springboot_db_1
+system('docker-compose', 'up', '-d', 'db')
+puts("\e[1;33mWill now setup pg for java-springboot\e[0;m")
+
+1.upto(10) do |i|
+  begin
+    warn("\e[1;35mWaiting for db startup, attempt ##{i}\e[0;m")
+    psql('SELECT 1')
+    warn("\e[1;34mConnection OK!\e[0;m")
+    break
+  rescue
+    sleep(1)
+  end
+end
+
+# Source: http://postgrest.org/en/v7.0.0/auth.html?highlight=users#logins
+# Roles are namespaced per-cluster rather than per-database so they may be prone to collision.
+psql("CREATE ROLE webapp NOINHERIT LOGIN PASSWORD '#{ENV.fetch('WEBAPP_PASSWORD')}'")
+
+['DEV_DBNAME', 'TEST_DBNAME'].each do |env_var|
+  dbname = ENV.fetch(env_var)
+  psql("CREATE DATABASE #{dbname}")
+end
+
+puts <<EOS
+\e[1;33m
+DB setup almost complete. Now run:
+
+  ./manage/dev/dbmate migrate
+
+Then access DB data this way:
+  ./manage/dev/psql [postgres]
+\e[0;m
+EOS

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $(basename $(pwd)) != 'nginx_dev' ]; then
+  echo 'Must run in script dir!'
+  exit 1
+fi
+
+# Works with Chrome (validate once) + curl + httpie
+openssl req \
+  -subj /CN=api-proxy-springboot.reminders.test \
+  -x509 -newkey rsa:4096 -nodes \
+  -keyout key.pem \
+  -out cert.pem \
+  -days 365

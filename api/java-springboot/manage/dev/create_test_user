@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Don't use httpie, cypress exec hangs weirdly with it
+curl --cacert ./api/java-springboot/nginx_dev/cert.pem -X POST https://api-proxy-springboot.reminders.test/test-setup

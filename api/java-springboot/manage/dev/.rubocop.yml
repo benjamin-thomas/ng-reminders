@@ -1,0 +1,29 @@
+# One can also disable a block of code that way:
+# rubocop:disable Style/BlockComments
+Style/BlockComments:
+  Enabled: false # I want to use this, occasionally
+
+Layout/FirstHashElementIndentation:
+  Enabled: false
+
+Layout/LeadingCommentSpace:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false # I prefer intellij styling
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space # idea cannot do differently
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Metrics/MethodLength:
+  Max: 20
+

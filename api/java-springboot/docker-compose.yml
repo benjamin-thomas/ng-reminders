@@ -1,0 +1,75 @@
+version: '3.7'
+services:
+
+  web:
+#    image: openjdk:11
+#    user: '1000'
+    build:
+      context: .
+      target: base
+    # Not sure why I need to double the dollar sign
+    command: /bin/bash -c 'DATABASE_URL=$$DATABASE_URL_DEVELOPMENT ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"'
+    ports:
+      - "127.1.4.1:8080:8080" # See: /etc/hosts
+      - "127.1.4.1:5005:5005" # debug
+    working_dir: /wip
+    volumes:
+      - ./:/wip
+      - ~/.m2-docker/:/home/spring/.m2/
+#      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
+    env_file:
+      - ~/.env/ng-reminders/java-springboot/web.env
+      - ~/.env/ng-reminders/java-springboot/db.env
+    environment:
+      - PORT=8080
+      - APP_ENV=development
+      - DOMAIN=reminders.test
+      - ORIGIN=https://ng.reminders.test:4200
+
+  nginx_proxy:
+    image: nginx
+    ports:
+      - "127.1.4.2:443:443" # See: /etc/hosts
+    depends_on:
+      - web
+    volumes:
+      - ./nginx_dev/:/etc/nginx/conf.d/
+
+  # https://github.com/golang-migrate/migrate/blob/master/database/postgres/TUTORIAL.md
+  dbmate:
+    image: amacneil/dbmate
+    volumes:
+      - ./db:/db
+    depends_on:
+      - db
+
+  psql:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    entrypoint: /bin/bash
+    env_file:
+      - ~/.env/ng-reminders/java-springboot/db.env
+    environment:
+      - PGHOST=db
+      - PGUSER=postgres
+      - PGPASSWORD=$POSTGRES_PASSWORD
+    depends_on:
+      - db
+
+  db:
+    # https://hub.docker.com/_/postgres
+    image: postgres:13
+    ports:
+      - "127.1.4.3:5432:5432" # See: /etc/hosts
+    restart: always
+    env_file:
+      - ~/.env/ng-reminders/java-springboot/db.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - /tmp/ng-reminders/java-springboot/dumps/:/tmp/dumps/
+      - ./log_all.init.sh:/docker-entrypoint-initdb.d/init.sh
+
+volumes:
+  db-data:

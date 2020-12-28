@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+source ~/.env/ng-reminders/java-springboot/db.env
+
+docker-compose run --rm --user=$UID \
+  -e DATABASE_URL="$DBMATE_URL_DEVELOPMENT" \
+  dbmate "$@"
